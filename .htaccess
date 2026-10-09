@@ -1,0 +1,9 @@
+# Lớp phòng thủ: không cho truy cập trực tiếp app/, themes/, storage/, database/, design/...
+# khi cả thư mục site nằm trong vùng web (XAMPP local, hoặc hosting không đổi được document root).
+# public/.htaccess mở lại quyền cho riêng public/.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Deny from all
+</IfModule>

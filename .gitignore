@@ -1,0 +1,64 @@
+# ============================================================
+# Repo B – WEBSITE thanhthanh (gốc repo = src/thanhthanh/)
+# Nguyên tắc: không đẩy bí mật, dữ liệu sinh ra khi chạy, file tạm.
+# KHÔNG ignore *.sql: schema.sql, seed.sql, migrations/*.sql phải được commit.
+# ============================================================
+
+# --- Cấu hình chứa mật khẩu (chỉ config.sample.php được commit) ---
+app/config.php
+app/config.*.php
+!app/config.sample.php
+
+# --- Bí mật & thông tin xác thực ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.ppk
+id_rsa*
+id_ed25519*
+credentials*.json
+secrets*.json
+service-account*.json
+
+# --- Bản sao lưu / dump database (chứa dữ liệu thật) ---
+*.sql.gz
+*.sql.zip
+*.dump
+database/backup/
+database/backups/
+
+# --- Dữ liệu sinh ra khi chạy (giữ lại thư mục bằng .gitkeep) ---
+storage/cache/*
+storage/logs/*
+public/uploads/*
+!**/.gitkeep
+# .htaccess trong uploads chặn chạy PHP (security.md) => BẮT BUỘC phải được commit
+!public/uploads/.htaccess
+
+# --- Log, file tạm, gói deploy ---
+*.log
+error_log
+php_errorlog
+*.bak
+*.orig
+*.tmp
+*~
+*.swp
+/dist/
+
+# --- Hệ điều hành / editor ---
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# --- TUỲ CHỌN: bỏ comment nếu không muốn đưa lên GitHub ---
+# Hiện đang được commit (nhỏ, không chứa bí mật) và LOẠI khi deploy.
+# design/
+# database/dev/
+# tests/

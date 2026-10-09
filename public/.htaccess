@@ -1,0 +1,45 @@
+# Document root của site. Thư mục cha (src/<site>/.htaccess) chặn mọi thứ, ở đây mở lại.
+<IfModule mod_authz_core.c>
+  Require all granted
+</IfModule>
+
+Options -Indexes
+DirectoryIndex index.php
+AddDefaultCharset utf-8
+
+# Chặn dotfile và file nhạy cảm
+<FilesMatch "(^\.|\.(sql|md|log|ini|bak|sh|py)$|^config.*\.php$)">
+  Require all denied
+</FilesMatch>
+
+# Nén gzip cho văn bản (HTML, CSS, JS, XML, SVG)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/xml application/rss+xml application/javascript text/javascript image/svg+xml application/json
+</IfModule>
+
+# Cache trình duyệt: asset có ?v=<hash> (build_assets) và ảnh upload tên có hash -> 1 năm
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|woff2|webp|png|jpe?g|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "manifest\.json$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # HTTPS + host chuẩn được ép trong PHP (Core/CanonicalHost, theo base_url, chỉ ở production)
+  # nên không viết cứng tên miền ở đây. Nếu muốn ép cả file tĩnh qua HTTPS, bỏ comment:
+  # RewriteCond %{HTTPS} !=on
+  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # File/thư mục có thật (assets, uploads, robots.txt) phục vụ trực tiếp
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Còn lại vào front controller
+  RewriteRule ^ index.php [L]
+</IfModule>

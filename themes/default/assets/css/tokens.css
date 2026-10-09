@@ -1,0 +1,70 @@
+/* ==========================================================
+   Design tokens – "Giấy ấm + đỏ đô". Mọi màu/kích thước dùng biến ở đây.
+   ========================================================== */
+:root {
+  --paper: #F7F1E8;
+  --card: #FFFBF5;
+  --ink: #2B211C;
+  --muted: #6B5A4E;
+  --line: #E4D9C8;
+  --accent: #8E1F2F;
+  --on-accent: #FFFFFF;
+  --brass: #B08D57;
+  --screen: #1E1512;         /* nền "phòng chiếu" (poster, trang phim) */
+  --on-screen: #EDE4D8;
+  --on-screen-muted: #B5A797;
+  --screen-line: #3A312B;
+  --screen-accent: #D0566A;
+  --on-screen-accent: #1C1714;
+  --on-screen-soft: #D9CDBE;
+
+  /* Hình minh họa SVG (poster, chân dung): cố định, không đổi theo chế độ tối */
+  --art-bg: #1E1512;
+  --art-frame: #B08D57;
+  --art-red: #8E1F2F;
+  --art-light: #EDE4D8;
+  --art-gold: #C9A66B;
+  --art-ink: #2B211C;
+  --art-paper: #F7F1E8;
+
+  /* Trạng thái (trang dev, admin) */
+  --success: #2E7D32;
+  --danger: #B42318;
+
+  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fs-body: 1.0625rem;      /* 17px */
+  --fs-small: 0.9375rem;     /* 15px */
+  --fs-xs: 0.8125rem;        /* 13px */
+  --lh-body: 1.75;
+
+  --container: 72rem;
+  --prose: 40rem;
+  --gutter: 16px;
+  --radius-sm: 12px;
+  --radius: 24px;
+  --radius-lg: 28px;
+  --tap: 44px;
+  --header-h: 72px;
+
+  color-scheme: light;
+}
+
+@media (min-width: 768px) {
+  :root { --fs-body: 1.125rem; --gutter: 24px; }
+}
+
+/* Chế độ tối: theo hệ điều hành, trừ khi người dùng chọn sáng */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1C1714; --card: #26201C; --ink: #EDE4D8; --muted: #B5A797;
+    --line: #3A312B; --accent: #D0566A; --on-accent: #1C1714; --brass: #C9A66B;
+    --screen: #120D0B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1C1714; --card: #26201C; --ink: #EDE4D8; --muted: #B5A797;
+  --line: #3A312B; --accent: #D0566A; --on-accent: #1C1714; --brass: #C9A66B;
+  --screen: #120D0B;
+  color-scheme: dark;
+}

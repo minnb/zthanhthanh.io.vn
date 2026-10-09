@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thanh Thanh – Biên kịch | Xem trước giao diện</title>
+<meta name="description" content="Bản xem trước giao diện website của biên kịch Thanh Thanh: trang chủ, bài viết, trang phim ĐỢI và trang quản trị.">
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          paper: 'var(--paper)',
+          card: 'var(--card)',
+          ink: 'var(--ink)',
+          muted: 'var(--muted)',
+          line: 'var(--line)',
+          accent: 'var(--accent)',
+          onaccent: 'var(--onaccent)',
+          brass: 'var(--brass)',
+          screen: 'var(--screen)',
+        },
+        fontFamily: {
+          // "serif" giữ tên lớp cho tiêu đề, nhưng dùng chung Be Vietnam Pro cho thanh và dễ đọc
+          serif: ['"Be Vietnam Pro"', 'system-ui', 'sans-serif'],
+          sans: ['"Be Vietnam Pro"', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        },
+        maxWidth: { prose: '40rem' },
+      },
+    },
+  };
+</script>
+
+<style>
+  /* ===== Design tokens (sẽ chuyển thành themes/default/assets/css/tokens.css) ===== */
+  :root {
+    --paper:#F7F1E8; --card:#FFFBF5; --ink:#2B211C; --muted:#6B5A4E;
+    --line:#E4D9C8; --accent:#8E1F2F; --onaccent:#FFFFFF; --brass:#B08D57;
+    --screen:#1E1512;
+    color-scheme: light;
+  }
+  .dark {
+    --paper:#1C1714; --card:#26201C; --ink:#EDE4D8; --muted:#B5A797;
+    --line:#3A312B; --accent:#D0566A; --onaccent:#1C1714; --brass:#C9A66B;
+    --screen:#120D0B;
+    color-scheme: dark;
+  }
+  html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  body { background:var(--paper); color:var(--ink); }
+  :focus-visible { outline:3px solid var(--accent); outline-offset:2px; border-radius:4px; }
+
+  /* Nội dung bài viết (prose) */
+  .prose-tt { font-size:1.0625rem; line-height:1.8; }
+  @media (min-width:768px){ .prose-tt { font-size:1.125rem; } }
+  .prose-tt > * + * { margin-top:1.15em; }
+  .prose-tt h2 { font-size:1.4rem; font-weight:600; line-height:1.35; margin-top:1.8em; }
+  .prose-tt blockquote { border-left:3px solid var(--accent); padding:.25em 0 .25em 1.1em;
+    font-style:italic; font-size:1.2rem; line-height:1.6; }
+
+  /* Tiêu đề: nét thanh hơn (600 thay vì 700), giãn dòng đủ chỗ cho dấu tiếng Việt */
+  .font-serif.font-bold { font-weight:600; letter-spacing:-0.015em; }
+  h1.font-serif, h2.font-serif { line-height:1.25 !important; }
+  body { font-weight:400; }
+  .prose-tt a { color:var(--accent); text-decoration:underline; text-underline-offset:3px; }
+  .prose-tt .dialog { padding-left:1.1em; border-left:2px dashed var(--line); font-style:italic; }
+
+  /* Dải phim cho timeline */
+  .sprocket { background-image:radial-gradient(circle, var(--paper) 3px, transparent 3.5px);
+    background-size:16px 12px; background-repeat:repeat-x; height:12px; }
+
+  .screen-view[hidden] { display:none !important; }
+  .no-scrollbar::-webkit-scrollbar { display:none; } .no-scrollbar { scrollbar-width:none; }
+</style>
+</head>
+
+<body class="font-sans antialiased">
+
+<!-- ================= THANH ĐIỀU KHIỂN MOCKUP (không thuộc website) ================= -->
+<div class="sticky top-0 z-50 border-b border-line bg-screen text-[#EDE4D8]">
+  <div class="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2">
+    <span class="hidden shrink-0 text-xs uppercase tracking-widest text-[#C9A66B] sm:inline">Xem trước</span>
+    <nav class="no-scrollbar flex flex-1 gap-1 overflow-x-auto" aria-label="Chọn màn hình xem trước">
+      <button data-go="home"  class="mock-tab shrink-0 rounded-full px-3 py-1.5 text-sm">Trang chủ</button>
+      <button data-go="post"  class="mock-tab shrink-0 rounded-full px-3 py-1.5 text-sm">Bài viết</button>
+      <button data-go="film"  class="mock-tab shrink-0 rounded-full px-3 py-1.5 text-sm">Phim ĐỢI</button>
+      <button data-go="admin" class="mock-tab shrink-0 rounded-full px-3 py-1.5 text-sm">Admin</button>
+    </nav>
+    <button id="themeToggle" class="shrink-0 rounded-full border border-[#3A312B] px-3 py-1.5 text-sm" aria-label="Bật/tắt chế độ tối">◐ <span class="hidden sm:inline">Sáng/Tối</span></button>
+  </div>
+</div>
+
+<!-- ================= HEADER WEBSITE ================= -->
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-14 focus:z-50 focus:rounded focus:bg-accent focus:px-3 focus:py-2 focus:text-onaccent">Bỏ qua menu</a>
+
+<header id="siteHeader" class="border-b border-line bg-paper">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
+    <a href="#home" data-go="home" class="group flex items-baseline gap-2">
+      <span class="font-serif text-2xl font-bold tracking-tight">Thanh Thanh</span>
+      <span class="hidden text-xs uppercase tracking-[0.2em] text-muted sm:inline">Biên kịch</span>
+    </a>
+    <nav aria-label="Menu chính" class="hidden lg:block">
+      <ul class="flex items-center gap-7 text-[15px] font-medium">
+        <li><a href="#post" data-go="post" class="hover:text-accent">Hậu trường biên kịch</a></li>
+        <li><a href="#post" data-go="post" class="hover:text-accent">Góc nghề</a></li>
+        <li><a href="#film" data-go="film" class="hover:text-accent">Phim</a></li>
+        <li><a href="#home" data-go="home" class="hover:text-accent">Diễn thuyết</a></li>
+        <li><a href="#home" data-go="home" class="hover:text-accent">Tủ sách</a></li>
+        <li><a href="#home" data-go="home" class="hover:text-accent">Giới thiệu</a></li>
+        <li><a href="#film" data-go="film" class="rounded-full border border-ink px-4 py-2 hover:border-accent hover:text-accent">EN · Press kit</a></li>
+      </ul>
+    </nav>
+    <button id="menuBtn" class="flex h-11 w-11 items-center justify-center rounded-full border border-line lg:hidden" aria-expanded="false" aria-controls="mobileMenu" aria-label="Mở menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h9"/></svg>
+    </button>
+  </div>
+
+  <!-- Menu di động: lớp phủ toàn màn hình -->
+  <div id="mobileMenu" class="fixed inset-x-0 bottom-0 top-[49px] z-40 hidden flex-col overflow-y-auto bg-paper lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="flex items-center justify-between border-b border-line px-4 py-4">
+      <span class="font-serif text-2xl font-bold">Thanh Thanh</span>
+      <button id="menuClose" class="flex h-11 w-11 items-center justify-center rounded-full border border-line" aria-label="Đóng menu">✕</button>
+    </div>
+    <ul class="flex-1 space-y-1 px-4 py-6 font-serif text-3xl">
+      <li><a href="#post" data-go="post" class="block py-3">Hậu trường biên kịch</a></li>
+      <li><a href="#post" data-go="post" class="block py-3">Góc nghề</a></li>
+      <li><a href="#film" data-go="film" class="block py-3">Phim</a></li>
+      <li><a href="#home" data-go="home" class="block py-3">Diễn thuyết</a></li>
+      <li><a href="#home" data-go="home" class="block py-3">Tủ sách</a></li>
+      <li><a href="#home" data-go="home" class="block py-3">Giới thiệu</a></li>
+    </ul>
+    <div class="border-t border-line px-4 py-5 text-sm text-muted">
+      <a href="#film" data-go="film" class="font-semibold text-ink">EN · Press kit</a> · Facebook · Threads
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ================================================================
+     MÀN 1 — TRANG CHỦ
+================================================================= -->
+<div id="screen-home" class="screen-view">
+
+  <!-- HERO -->
+  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 md:grid-cols-[1.2fr_1fr] md:px-6 md:pb-20 md:pt-16">
+    <div>
+      <p class="mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-accent">Biên kịch · Diễn viên · Người kể chuyện</p>
+      <h1 class="font-serif text-[2.4rem] font-bold leading-[1.12] tracking-tight sm:text-5xl md:text-[3.6rem]">
+        Đưa lát cắt đời sống <em class="text-accent">người ngồi xe lăn</em> vào điện ảnh.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+        Mình là Thanh Thanh, biên kịch và vai chính của phim ngắn <strong class="text-ink">ĐỢI</strong>. Ở đây mình kể chuyện hậu trường, những “lần đầu tiên”, và những giới hạn mà không ai có quyền đặt ra cho mình.
+      </p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href="#film" data-go="film" class="inline-flex min-h-[48px] items-center justify-center rounded-full bg-accent px-7 font-semibold text-onaccent hover:opacity-90">Xem phim ĐỢI</a>
+        <a href="#post" data-go="post" class="inline-flex min-h-[48px] items-center justify-center rounded-full border border-ink px-7 font-semibold hover:border-accent hover:text-accent">Đọc hậu trường →</a>
+      </div>
+    </div>
+
+    <figure class="relative mx-auto w-full max-w-sm md:max-w-none">
+      <div class="aspect-[4/5] overflow-hidden rounded-[28px] border border-line bg-card">
+        <svg viewBox="0 0 400 500" class="h-full w-full" role="img" aria-label="Ảnh chân dung tác giả (ảnh minh họa)">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9A66B" stop-opacity=".35"/><stop offset="1" stop-color="#8E1F2F" stop-opacity=".55"/></linearGradient>
+          </defs>
+          <rect width="400" height="500" fill="url(#g1)"/>
+          <circle cx="200" cy="190" r="62" fill="#2B211C" opacity=".85"/>
+          <path d="M95 500c8-120 55-190 105-190s97 70 105 190z" fill="#2B211C" opacity=".85"/>
+          <circle cx="300" cy="420" r="58" fill="none" stroke="#F7F1E8" stroke-width="6" opacity=".7"/>
+          <text x="200" y="40" text-anchor="middle" font-family="Be Vietnam Pro" font-size="14" fill="#F7F1E8" opacity=".85">Ảnh chân dung · thay sau</text>
+        </svg>
+      </div>
+      <figcaption class="absolute -bottom-5 left-4 right-4 rounded-2xl border border-line bg-card px-4 py-3 text-sm shadow-sm sm:left-auto sm:right-[-12px] sm:w-64">
+        <span class="block text-xs uppercase tracking-widest text-muted">Mới nhất</span>
+        <span class="font-semibold">ĐỢI vào Chung kết Inspiring Asia 2026</span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- DẢI THÀNH TÍCH -->
+  <section aria-label="Thành tích" class="border-y border-line bg-card">
+    <ul class="mx-auto grid max-w-6xl grid-cols-1 divide-y divide-line px-4 sm:grid-cols-3 sm:divide-x sm:divide-y-0 md:px-6">
+      <li class="py-5 sm:px-6 sm:first:pl-0"><p class="font-serif text-2xl font-bold text-accent">Chung kết</p><p class="text-sm text-muted">Inspiring Asia 2026 · Manila</p></li>
+      <li class="py-5 sm:px-6"><p class="font-serif text-2xl font-bold text-accent">Chung kết</p><p class="text-sm text-muted">Inspiring Vietnam 2026 · SIHUB</p></li>
+      <li class="py-5 sm:px-6"><p class="font-serif text-2xl font-bold text-accent">Top 7</p><p class="text-sm text-muted">From Script to Screen mùa 1</p></li>
+    </ul>
+  </section>
+
+  <!-- PHIM NỔI BẬT -->
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24" aria-labelledby="featuredFilm">
+    <div class="mb-8 flex items-end justify-between gap-4">
+      <h2 id="featuredFilm" class="font-serif text-3xl font-bold md:text-4xl">Phim nổi bật</h2>
+      <a href="#film" data-go="film" class="text-sm font-semibold text-accent">Tất cả phim →</a>
+    </div>
+    <article class="overflow-hidden rounded-[28px] border border-line bg-card">
+      <a href="#film" data-go="film" class="block">
+        <div class="relative aspect-[2.39/1] bg-screen">
+          <svg viewBox="0 0 956 400" class="h-full w-full" role="img" aria-label="Poster phim ngắn ĐỢI (minh họa)">
+            <rect width="956" height="400" fill="#1E1512"/>
+            <rect x="520" y="40" width="356" height="320" fill="none" stroke="#B08D57" stroke-width="2" opacity=".55"/>
+            <rect x="580" y="90" width="236" height="220" fill="none" stroke="#B08D57" stroke-width="2" opacity=".8"/>
+            <rect x="640" y="140" width="116" height="120" fill="#8E1F2F" opacity=".55"/>
+            <circle cx="698" cy="182" r="14" fill="#EDE4D8"/>
+            <path d="M682 236c2-22 8-34 16-34s14 12 16 34z" fill="#EDE4D8"/>
+            <text x="70" y="250" font-family="Be Vietnam Pro" font-weight="600" font-size="120" fill="#EDE4D8">ĐỢI</text>
+            <text x="74" y="290" font-family="Be Vietnam Pro" font-size="16" letter-spacing="4" fill="#C9A66B">PHIM NGẮN · 2026</text>
+          </svg>
+          <span class="absolute left-4 top-4 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-onaccent">Chung kết Inspiring Asia 2026 · Manila</span>
+        </div>
+      </a>
+      <div class="grid gap-6 p-6 md:grid-cols-[2fr_1fr] md:p-10">
+        <div>
+          <h3 class="font-serif text-2xl font-bold md:text-3xl"><a href="#film" data-go="film" class="hover:text-accent">ĐỢI</a></h3>
+          <p class="mt-3 text-lg leading-relaxed text-muted">An mắc kẹt trong chiếc lồng vô hình mang tên chờ đợi: chờ một người, và chờ chính mình dám bước ra. Một trong hai phim Việt Nam vào Chung kết Inspiring Asia 2026.</p>
+        </div>
+        <dl class="grid grid-cols-2 gap-4 text-sm md:grid-cols-1">
+          <div><dt class="text-muted">Biên kịch & vai chính</dt><dd class="font-semibold">Thanh Thanh</dd></div>
+          <div><dt class="text-muted">Thể loại</dt><dd class="font-semibold">Phim ngắn · Chính kịch</dd></div>
+        </dl>
+      </div>
+    </article>
+  </section>
+
+  <!-- BÀI MỚI -->
+  <section class="bg-card py-16 md:py-24" aria-labelledby="latest">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <div class="mb-8 flex items-end justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-accent">#hautruongbienkich</p>
+          <h2 id="latest" class="mt-2 font-serif text-3xl font-bold md:text-4xl">Hậu trường biên kịch</h2>
+        </div>
+        <a href="#post" data-go="post" class="shrink-0 text-sm font-semibold text-accent">Xem tất cả →</a>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        <!-- card -->
+        <article class="group flex flex-col rounded-3xl border border-line bg-paper p-6">
+          <p class="font-serif text-sm italic text-muted">Cảnh 01</p>
+          <h3 class="mt-3 font-serif text-xl font-bold leading-snug"><a href="#post" data-go="post" class="group-hover:text-accent">Không để người khác quyết định giới hạn của bản thân</a></h3>
+          <p class="mt-3 flex-1 text-[15px] leading-relaxed text-muted">“Bà mà đóng vai chính, phim của bà bể là cái chắc.” Câu nói ấy theo mình suốt hai ngày ra trường quay…</p>
+          <p class="mt-5 text-xs text-muted">Hậu trường · 4 phút đọc</p>
+        </article>
+        <article class="group flex flex-col rounded-3xl border border-line bg-paper p-6">
+          <p class="font-serif text-sm italic text-muted">Cảnh 02</p>
+          <h3 class="mt-3 font-serif text-xl font-bold leading-snug"><a href="#post" data-go="post" class="group-hover:text-accent">Đứng giữa chợ rau rao bán sách Account: bài học về khán giả mục tiêu</a></h3>
+          <p class="mt-3 flex-1 text-[15px] leading-relaxed text-muted">Trước khi viết, câu đầu tiên phải trả lời: mình kể câu chuyện này cho ai xem?</p>
+          <p class="mt-5 text-xs text-muted">Góc nghề · 3 phút đọc</p>
+        </article>
+        <article class="group flex flex-col rounded-3xl border border-line bg-paper p-6">
+          <p class="font-serif text-sm italic text-muted">Cảnh 03</p>
+          <h3 class="mt-3 font-serif text-xl font-bold leading-snug"><a href="#post" data-go="post" class="group-hover:text-accent">Giấy phép phân loại phim: chiếc vé thông hành ai làm phim cũng cần</a></h3>
+          <p class="mt-3 flex-1 text-[15px] leading-relaxed text-muted">Nộp online, khoảng 10 ngày, lệ phí 1,6 triệu cho phim dưới 60 phút. Kinh nghiệm thật từ ĐỢI.</p>
+          <p class="mt-5 text-xs text-muted">Góc nghề · 5 phút đọc</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- DÒNG THỜI GIAN -->
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24" aria-labelledby="journey">
+    <h2 id="journey" class="font-serif text-3xl font-bold md:text-4xl">Từ vài dòng ý tưởng đến Manila</h2>
+    <p class="mt-3 max-w-2xl text-muted">Gần 3 tháng “thanh xuân bay màu” cho một phim ngắn đầu tay.</p>
+    <div class="timeline mt-10"></div>
+  </section>
+
+  <!-- DIỄN THUYẾT + TỦ SÁCH -->
+  <section class="border-t border-line">
+    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:px-6 md:py-24">
+      <div aria-labelledby="speaking">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-accent">Diễn thuyết</p>
+        <h2 id="speaking" class="mt-2 font-serif text-3xl font-bold">Ra khỏi vỏ ốc, đứng trước đám đông</h2>
+        <article class="mt-6 rounded-3xl border border-line bg-card p-6">
+          <p class="text-sm text-muted">Trụ sở Liên Hợp Quốc tại Việt Nam · cùng Viện iSEE</p>
+          <h3 class="mt-2 font-serif text-xl font-bold">“Làm thế nào để xây dựng một thế giới đáng sống hơn?”</h3>
+          <p class="mt-3 leading-relaxed text-muted">20 phút chia sẻ sau 10 năm quanh quẩn trong phòng. Mẹo nhỏ: coi khán giả như những người bạn và mình chỉ đang ngồi xuống “chém gió” cùng họ.</p>
+          <a href="#post" data-go="post" class="mt-4 inline-block text-sm font-semibold text-accent">Đọc câu chuyện →</a>
+        </article>
+      </div>
+      <div aria-labelledby="books">
+        <p class="text-xs font-semibold uppercase tracking-[0.22em] text-accent">Tủ sách</p>
+        <h2 id="books" class="mt-2 font-serif text-3xl font-bold">Sách mình đang đọc</h2>
+        <ul class="mt-6 grid grid-cols-3 gap-4">
+          <li><div class="flex aspect-[2/3] items-end rounded-lg bg-[#8E1F2F] p-3 font-serif text-sm font-bold leading-tight text-[#F7F1E8] shadow">Tuổi Thơ Dữ Dội</div><p class="mt-2 text-xs text-muted">Phùng Quán</p></li>
+          <li><div class="flex aspect-[2/3] items-end rounded-lg bg-[#3D4A3A] p-3 font-serif text-sm font-bold leading-tight text-[#F7F1E8] shadow">Vượt Côn Đảo</div><p class="mt-2 text-xs text-muted">Phùng Quán</p></li>
+          <li><div class="flex aspect-[2/3] items-end rounded-lg bg-[#2B211C] p-3 font-serif text-sm font-bold leading-tight text-[#C9A66B] shadow">Save the Cat!</div><p class="mt-2 text-xs text-muted">Blake Snyder</p></li>
+        </ul>
+        <p class="mt-4 text-sm text-muted">“Bé không thể đọc, lớn lại muốn tìm về đọc để hiểu, thương và tự thấy phải cố gắng.”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ĐĂNG KÝ -->
+  <section class="px-4 pb-16 md:px-6 md:pb-24">
+    <div class="mx-auto max-w-6xl rounded-[28px] bg-accent px-6 py-10 text-onaccent md:px-12 md:py-14">
+      <div class="grid items-center gap-6 md:grid-cols-2">
+        <div>
+          <h2 class="font-serif text-3xl font-bold">Nhận thư hậu trường</h2>
+          <p class="mt-2 opacity-90">Mỗi tháng một lá thư: chuyện nghề, phim mới và cuốn sách mình mê.</p>
+        </div>
+        <form class="flex flex-col gap-3 sm:flex-row" onsubmit="event.preventDefault();this.querySelector('button').textContent='Đã đăng ký ✓'">
+          <label for="nlEmail" class="sr-only">Email của bạn</label>
+          <input id="nlEmail" type="email" required placeholder="email@cua-ban.com" class="min-h-[48px] flex-1 rounded-full border-0 px-5 text-[#2B211C] placeholder:text-[#6B5A4E]">
+          <button class="min-h-[48px] rounded-full bg-[#2B211C] px-6 font-semibold text-[#F7F1E8]">Đăng ký</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================================
+     MÀN 2 — BÀI VIẾT
+================================================================= -->
+<div id="screen-post" class="screen-view" hidden>
+  <article class="px-4 pb-16 pt-8 md:px-6 md:pt-12">
+    <header class="mx-auto max-w-prose">
+      <nav aria-label="Breadcrumb" class="text-sm text-muted">
+        <ol class="flex flex-wrap gap-x-2">
+          <li><a href="#home" data-go="home" class="hover:text-accent">Trang chủ</a> /</li>
+          <li><a href="#post" class="hover:text-accent">Hậu trường biên kịch</a> /</li>
+          <li aria-current="page" class="text-ink">Không để người khác quyết định…</li>
+        </ol>
+      </nav>
+      <p class="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-accent">Hậu trường biên kịch</p>
+      <h1 class="mt-3 font-serif text-[2.1rem] font-bold leading-[1.15] tracking-tight md:text-5xl">Không để người khác quyết định giới hạn của bản thân</h1>
+      <p class="mt-5 text-lg leading-relaxed text-muted">Một câu chê thẳng mặt, hai ngày ra trường quay với cánh tay cháy nắng, và vai diễn từng bị “dự báo” làm bể phim.</p>
+      <div class="mt-6 flex items-center gap-3 border-y border-line py-4 text-sm">
+        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-accent font-serif font-bold text-onaccent" aria-hidden="true">T</span>
+        <div><p class="font-semibold">Thanh Thanh</p><p class="text-muted"><time datetime="2026-09-20">20/09/2026</time> · 4 phút đọc</p></div>
+      </div>
+    </header>
+
+    <figure class="mx-auto mt-8 max-w-4xl">
+      <div class="aspect-video overflow-hidden rounded-[24px] bg-screen">
+        <svg viewBox="0 0 1600 900" class="h-full w-full" role="img" aria-label="Thanh Thanh tập vai An tại nhà trước ngày quay (ảnh minh họa)">
+          <rect width="1600" height="900" fill="#1E1512"/>
+          <rect x="560" y="160" width="480" height="580" fill="#8E1F2F" opacity=".35"/>
+          <circle cx="800" cy="380" r="70" fill="#EDE4D8" opacity=".9"/>
+          <path d="M690 740c6-150 50-230 110-230s104 80 110 230z" fill="#EDE4D8" opacity=".9"/>
+          <circle cx="980" cy="680" r="80" fill="none" stroke="#C9A66B" stroke-width="8"/>
+        </svg>
+      </div>
+      <figcaption class="mt-3 text-center text-sm text-muted">Tập vai An tại nhà, “cameraman kiêm khán giả bất đắc dĩ” là chị gái.</figcaption>
+    </figure>
+
+    <div class="prose-tt mx-auto mt-10 max-w-prose">
+      <p>Hôm qua ngồi xem series <em>Agency</em>, nghe câu thoại của nhân vật chính, mình phải note lại liền: <strong>“Không để người khác quyết định giới hạn của bản thân.”</strong></p>
+      <p>Nhớ lại hồi chuẩn bị làm phim ngắn <a href="#film" data-go="film">ĐỢI</a>, mình hí hửng khoe với ông bạn sẽ tự đóng vai chính. Ông bạn bốp chát luôn vào mặt mình:</p>
+      <p class="dialog">– Bà mà đóng vai chính, phim của bà bể là cái chắc.</p>
+      <p>Cũng phải thừa nhận khả năng này có thể xảy ra, vì mình chưa từng làm diễn viên, cũng chưa học qua lớp diễn xuất nào. Viết kịch bản chưa ổn thì còn ngồi sửa được, chứ ra trường quay mà diễn đơ, cả đoàn đứng chờ thì áp lực lắm.</p>
+      <h2>Nhận vai, rồi tập như thật</h2>
+      <p>Nhưng vai An mình vẫn nhận. Thứ nhất là vì kinh phí làm phim ít, thứ hai là mình muốn trải nghiệm một lần ở vị trí mới. Từ hôm ấy mình đọc kịch bản kỹ hơn, tưởng tượng An gặp chuyện này sẽ phản ứng ra sao. Cảnh nào cảm xúc khó, mình tập trước, nhờ chị sang Việt Trì quay lại để xem rồi sửa. Chưa biết lên phim thế nào chứ ở nhà đã có một cameraman kiêm khán giả bất đắc dĩ rồi hẹ hẹ.</p>
+      <blockquote>Giới hạn của bản thân đâu thể nằm ở mồm người khác. Giới hạn của mình nằm ở việc mình có dám dấn thân.</blockquote>
+      <h2>Người lạ ở Sài Gòn và một lời khen</h2>
+      <p>Hôm trước, một bạn trong Sài Gòn nhắn rằng bạn đã xem ĐỢI tại đêm chung kết Inspiring Vietnam 2026 và khen nét diễn của mình. Hóa ra cái vai từng được dự báo là nguyên nhân khiến phim thất bại lại có người thích.</p>
+      <p>Người ta có nhìn nhận chắc nịch đến mấy thì đó cũng chỉ là góc nhìn của họ. Còn thực lực và kết quả, phải chính mình xắn tay vào làm mới có câu trả lời.</p>
+    </div>
+
+    <footer class="mx-auto mt-12 max-w-prose">
+      <ul class="flex flex-wrap gap-2" aria-label="Thẻ">
+        <li><a href="#post" class="inline-block rounded-full border border-line px-3 py-1.5 text-sm hover:border-accent hover:text-accent">#hautruongbienkich</a></li>
+        <li><a href="#film" data-go="film" class="inline-block rounded-full border border-line px-3 py-1.5 text-sm hover:border-accent hover:text-accent">#PhimngắnĐỢI</a></li>
+      </ul>
+      <div class="mt-6 flex flex-wrap items-center gap-2 border-y border-line py-4">
+        <span class="mr-2 text-sm text-muted">Chia sẻ:</span>
+        <button class="min-h-[44px] rounded-full bg-[#1877F2] px-4 text-sm font-semibold text-white">Facebook</button>
+        <button class="min-h-[44px] rounded-full bg-ink px-4 text-sm font-semibold text-paper">Threads</button>
+        <button class="copy-link min-h-[44px] rounded-full border border-line px-4 text-sm font-semibold">Sao chép link</button>
+      </div>
+      <aside class="mt-8 flex gap-4 rounded-3xl border border-line bg-card p-6" aria-label="Về tác giả">
+        <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent font-serif text-xl font-bold text-onaccent" aria-hidden="true">T</span>
+        <div>
+          <p class="font-serif text-lg font-bold">Thanh Thanh</p>
+          <p class="mt-1 text-[15px] leading-relaxed text-muted">Biên kịch ngồi xe lăn, tác giả phim ngắn ĐỢI (Chung kết Inspiring Asia 2026). Đang phát triển phim điện ảnh “Đứa con đến từ cõi âm”.</p>
+          <a href="#home" data-go="home" class="mt-2 inline-block text-sm font-semibold text-accent">Về mình →</a>
+        </div>
+      </aside>
+    </footer>
+  </article>
+
+  <section class="border-t border-line bg-card px-4 py-14 md:px-6" aria-labelledby="related">
+    <div class="mx-auto max-w-6xl">
+      <h2 id="related" class="font-serif text-2xl font-bold">Đọc tiếp</h2>
+      <div class="mt-6 grid gap-6 md:grid-cols-3">
+        <a href="#post" class="block rounded-3xl border border-line bg-paper p-6 hover:border-accent"><p class="text-xs text-muted">Hậu trường</p><p class="mt-2 font-serif text-lg font-bold">Ngại tới bến: lần đầu xem lại phim mình đóng</p></a>
+        <a href="#post" class="block rounded-3xl border border-line bg-paper p-6 hover:border-accent"><p class="text-xs text-muted">Hậu trường</p><p class="mt-2 font-serif text-lg font-bold">Ekip đặc biệt: người chuyên chê, người chuyên chăm, người chuyên chở</p></a>
+        <a href="#film" data-go="film" class="block rounded-3xl border border-line bg-paper p-6 hover:border-accent"><p class="text-xs text-muted">Phim</p><p class="mt-2 font-serif text-lg font-bold">ĐỢI: hành trình từ ý tưởng đến Manila</p></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================================
+     MÀN 3 — TRANG PHIM ĐỢI
+================================================================= -->
+<div id="screen-film" class="screen-view" hidden>
+  <section class="bg-screen text-[#EDE4D8]">
+    <div class="mx-auto max-w-6xl px-4 pb-10 pt-6 md:px-6 md:pb-14">
+      <nav aria-label="Breadcrumb" class="text-sm text-[#B5A797]">
+        <a href="#home" data-go="home" class="hover:text-white">Trang chủ</a> / <a href="#film" class="hover:text-white">Phim</a> / <span class="text-[#EDE4D8]">ĐỢI</span>
+      </nav>
+      <div class="relative mt-6 aspect-[2.39/1] overflow-hidden rounded-[20px] border border-[#3A312B]">
+        <svg viewBox="0 0 956 400" class="h-full w-full" role="img" aria-label="Khung hình An trong 'khung trong khung' (minh họa)">
+          <rect width="956" height="400" fill="#1E1512"/>
+          <rect x="200" y="30" width="556" height="340" fill="none" stroke="#C9A66B" stroke-width="2" opacity=".4"/>
+          <rect x="300" y="80" width="356" height="240" fill="none" stroke="#C9A66B" stroke-width="2" opacity=".65"/>
+          <rect x="400" y="130" width="156" height="140" fill="#8E1F2F" opacity=".6"/>
+          <circle cx="478" cy="178" r="16" fill="#EDE4D8"/>
+          <path d="M458 246c3-28 10-42 20-42s17 14 20 42z" fill="#EDE4D8"/>
+        </svg>
+        <button class="absolute inset-0 m-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#D0566A] text-[#1C1714]" aria-label="Xem trailer">
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M6 3l13 8-13 8z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="mt-8 grid gap-8 md:grid-cols-[1.5fr_1fr]">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-[#C9A66B]">Phim ngắn · 2026</p>
+          <h1 class="mt-2 font-serif text-6xl font-bold md:text-7xl">ĐỢI</h1>
+          <p class="mt-4 text-lg leading-relaxed text-[#D9CDBE]">An giam mình trong chiếc lồng tâm lý mang tên chờ đợi người khác, và trong chính lựa chọn của mình. Phải qua hết những điều ấy, cô mới tìm được lối ra.</p>
+          <span class="mt-5 inline-block rounded-full bg-[#D0566A] px-4 py-1.5 text-sm font-semibold text-[#1C1714]">★ Chung kết Inspiring Asia 2026 · Manila</span>
+        </div>
+        <dl class="grid grid-cols-2 gap-x-6 gap-y-4 self-start rounded-2xl border border-[#3A312B] p-5 text-sm">
+          <div><dt class="text-[#B5A797]">Biên kịch</dt><dd class="font-semibold">Thanh Thanh</dd></div>
+          <div><dt class="text-[#B5A797]">Vai chính (An)</dt><dd class="font-semibold">Thanh Thanh</dd></div>
+          <div><dt class="text-[#B5A797]">Thể loại</dt><dd class="font-semibold">Chính kịch</dd></div>
+          <div><dt class="text-[#B5A797]">Thời lượng</dt><dd class="font-semibold">8 phút <span class="font-normal text-[#B5A797]">(bản dự thi 6 phút)</span></dd></div>
+          <div class="col-span-2"><dt class="text-[#B5A797]">Pitching trước</dt><dd class="font-semibold">ĐD Trịnh Đình Lê Minh · chị Phạm Thị Hảo</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20" aria-labelledby="festivals">
+    <h2 id="festivals" class="font-serif text-3xl font-bold">Hành trình liên hoan & giải thưởng</h2>
+    <ul class="mt-6 divide-y divide-line rounded-3xl border border-line bg-card">
+      <li class="flex flex-col gap-1 p-5 sm:flex-row sm:items-center sm:justify-between"><span class="font-semibold">Inspiring Asia 2026, Manila, Philippines</span><span class="text-sm font-semibold text-accent">Chung kết · cuối 10/2026</span></li>
+      <li class="flex flex-col gap-1 p-5 sm:flex-row sm:items-center sm:justify-between"><span class="font-semibold">Inspiring Asia 2026</span><span class="text-sm text-muted">Bán kết · 1 trong 4 đại diện Việt Nam</span></li>
+      <li class="flex flex-col gap-1 p-5 sm:flex-row sm:items-center sm:justify-between"><span class="font-semibold">Inspiring Vietnam 2026, SIHUB, TP.HCM</span><span class="text-sm text-muted">Chung kết · Buổi chiếu đầu tiên</span></li>
+    </ul>
+  </section>
+
+  <section class="border-y border-line bg-card" aria-labelledby="scene">
+    <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-16 md:grid-cols-2 md:px-6 md:py-20">
+      <div>
+        <p class="font-serif text-sm italic text-muted">Cảnh đáng nhớ</p>
+        <h2 id="scene" class="mt-2 font-serif text-3xl font-bold">Khung trong khung: nhà tù vô hình của An</h2>
+        <p class="mt-4 leading-relaxed text-muted">“Dù không rành mấy kỹ thuật set-up ánh sáng phức tạp, mình chắc chắn một điều: đến đoạn này phải để An bị nhốt lại.” Kỹ thuật <em>framing within a frame</em> lột tả khoảnh khắc An lọt thỏm, bơ vơ và bất lực nhất.</p>
+        <a href="#post" data-go="post" class="mt-4 inline-block text-sm font-semibold text-accent">Đọc ghi chép đầy đủ →</a>
+      </div>
+      <blockquote class="border-l-4 border-accent pl-6 font-serif text-2xl italic leading-snug">“Đứa em cùng làm phim nghỉ hẳn nửa ngày làm, chạy từ Q7 sang xem, và bảo thích nhất khung hình này.”</blockquote>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20" aria-labelledby="crew">
+    <h2 id="crew" class="font-serif text-3xl font-bold">Ekip đặc biệt nhất</h2>
+    <p class="mt-2 text-muted">Người chuyên chê, người chuyên chăm, người chuyên chở… còn biên kịch thì chuyên lì.</p>
+    <ul class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <li class="rounded-3xl border border-line bg-card p-5"><p class="text-3xl" aria-hidden="true">🗯️</p><p class="mt-3 font-semibold">Hòa</p><p class="text-sm text-muted">Giám đốc Sở Chê Bai</p></li>
+      <li class="rounded-3xl border border-line bg-card p-5"><p class="text-3xl" aria-hidden="true">🍲</p><p class="mt-3 font-semibold">Mẹ</p><p class="text-sm text-muted">Ban Hậu Cần · Cổ vũ · Chăm sóc</p></li>
+      <li class="rounded-3xl border border-line bg-card p-5"><p class="text-3xl" aria-hidden="true">🚗</p><p class="mt-3 font-semibold">Anh</p><p class="text-sm text-muted">Bộ phận Vận Chuyển</p></li>
+      <li class="rounded-3xl border border-line bg-card p-5"><p class="text-3xl" aria-hidden="true">🎥</p><p class="mt-3 font-semibold">Chị (Việt Trì)</p><p class="text-sm text-muted">Cameraman kiêm khán giả bất đắc dĩ</p></li>
+    </ul>
+  </section>
+
+  <section class="border-t border-line px-4 py-16 md:px-6 md:py-20" aria-labelledby="journey2">
+    <div class="mx-auto max-w-6xl">
+      <h2 id="journey2" class="font-serif text-3xl font-bold">Dòng thời gian sản xuất</h2>
+      <div class="timeline mt-10"></div>
+    </div>
+  </section>
+
+  <section class="px-4 pb-16 md:px-6">
+    <div class="mx-auto flex max-w-6xl flex-col items-start gap-4 rounded-[28px] border border-line bg-card p-8 md:flex-row md:items-center md:justify-between">
+      <div><h2 class="font-serif text-2xl font-bold">Báo chí & chiếu phim</h2><p class="text-muted">Press kit tiếng Anh, poster độ phân giải cao, liên hệ tổ chức chiếu.</p></div>
+      <a href="#film" class="inline-flex min-h-[48px] items-center rounded-full bg-accent px-6 font-semibold text-onaccent">Tải press kit (EN)</a>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================================
+     MÀN 4 — ADMIN: SOẠN BÀI
+================================================================= -->
+<div id="screen-admin" class="screen-view" hidden>
+  <div class="lg:grid lg:min-h-screen lg:grid-cols-[230px_1fr]">
+    <!-- Sidebar desktop -->
+    <aside class="hidden border-r border-line bg-card lg:block" aria-label="Menu quản trị">
+      <div class="px-5 py-5"><p class="font-serif text-xl font-bold">Thanh Thanh</p><p class="text-xs text-muted">Quản trị</p></div>
+      <nav class="px-3 text-[15px]">
+        <a class="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-paper" href="#admin">Tổng quan</a>
+        <a class="flex items-center justify-between rounded-xl bg-paper px-3 py-2.5 font-semibold text-accent" href="#admin" aria-current="page">Bài viết</a>
+        <a class="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-paper" href="#admin">Chờ duyệt <span class="rounded-full bg-accent px-2 text-xs text-onaccent">10</span></a>
+        <a class="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-paper" href="#admin">Thư viện ảnh</a>
+        <a class="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-paper" href="#admin">Phim</a>
+        <a class="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-paper" href="#admin">Trang tĩnh</a>
+        <a class="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-paper" href="#admin">Tủ sách</a>
+        <a class="flex items-center justify-between rounded-xl px-3 py-2.5 hover:bg-paper" href="#admin">Cài đặt</a>
+      </nav>
+    </aside>
+
+    <div class="min-w-0 pb-36 lg:pb-10">
+      <!-- Topbar -->
+      <div class="sticky top-[49px] z-30 flex items-center justify-between gap-3 border-b border-line bg-paper px-4 py-3 md:px-6">
+        <div class="min-w-0"><p class="text-xs text-muted">Bài viết / Sửa</p><p class="truncate font-semibold">Không để người khác quyết định giới hạn…</p></div>
+        <div class="hidden gap-2 sm:flex">
+          <span id="saveState" class="self-center text-xs text-muted">Đã tự lưu 10:42</span>
+          <button class="min-h-[40px] rounded-full border border-line px-4 text-sm font-semibold">Lưu nháp</button>
+          <button class="min-h-[40px] rounded-full bg-accent px-4 text-sm font-semibold text-onaccent">Xuất bản</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 px-4 py-6 md:px-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <!-- Editor -->
+        <section aria-label="Nội dung bài" class="min-w-0">
+          <label for="title" class="sr-only">Tiêu đề</label>
+          <input id="title" value="Không để người khác quyết định giới hạn của bản thân" class="w-full rounded-2xl border border-line bg-card px-4 py-3 font-serif text-2xl font-bold">
+
+          <div class="mt-4 overflow-hidden rounded-2xl border border-line bg-card">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line px-2 py-2">
+              <div class="flex gap-1" role="toolbar" aria-label="Định dạng">
+                <button class="h-10 w-10 rounded-lg font-bold hover:bg-paper" aria-label="In đậm">B</button>
+                <button class="h-10 w-10 rounded-lg italic hover:bg-paper" aria-label="In nghiêng">I</button>
+                <button class="h-10 w-10 rounded-lg text-sm font-semibold hover:bg-paper" aria-label="Tiêu đề H2">H2</button>
+                <button class="h-10 w-10 rounded-lg font-serif text-xl hover:bg-paper" aria-label="Trích dẫn">“</button>
+                <button class="h-10 w-10 rounded-lg hover:bg-paper" aria-label="Chèn link">🔗</button>
+                <button class="h-10 w-10 rounded-lg hover:bg-paper" aria-label="Chèn ảnh">🖼</button>
+              </div>
+              <div class="flex rounded-full border border-line p-1 text-sm" role="tablist">
+                <button role="tab" data-etab="write" class="etab rounded-full px-3 py-1 font-semibold">Viết</button>
+                <button role="tab" data-etab="preview" class="etab rounded-full px-3 py-1">Xem trước</button>
+              </div>
+            </div>
+            <label for="body" class="sr-only">Nội dung (Markdown)</label>
+            <textarea id="body" rows="16" class="block w-full resize-y bg-card px-4 py-4 font-mono text-[15px] leading-7 outline-none">Hôm qua ngồi xem series *Agency*, nghe câu thoại của nhân vật chính, mình phải note lại liền: **“Không để người khác quyết định giới hạn của bản thân.”**
+
+Nhớ lại hồi chuẩn bị làm phim ngắn ĐỢI, mình hí hửng khoe với ông bạn sẽ tự đóng vai chính…
+
+## Nhận vai, rồi tập như thật
+
+Nhưng vai An mình vẫn nhận. Thứ nhất là vì kinh phí làm phim ít, thứ hai là mình muốn trải nghiệm một lần ở vị trí mới.
+
+> Giới hạn của bản thân đâu thể nằm ở mồm người khác.</textarea>
+            <div id="bodyPreview" class="prose-tt hidden px-5 py-5"></div>
+          </div>
+          <p class="mt-2 text-xs text-muted"><span id="wordCount">0</span> từ · Tự lưu mỗi 30 giây</p>
+        </section>
+
+        <!-- Panels -->
+        <div class="min-w-0 space-y-6">
+          <section class="rounded-2xl border border-line bg-card p-5" aria-labelledby="pubH">
+            <h2 id="pubH" class="font-semibold">Xuất bản</h2>
+            <div class="mt-4 space-y-4 text-sm">
+              <div><label class="text-muted" for="st">Trạng thái</label>
+                <select id="st" class="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5"><option>Nháp</option><option>Chờ duyệt</option><option>Hẹn giờ</option><option selected>Đã xuất bản</option></select></div>
+              <div><label class="text-muted" for="cat">Danh mục</label>
+                <select id="cat" class="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5"><option selected>Hậu trường biên kịch</option><option>Góc nghề</option><option>Diễn thuyết</option></select></div>
+              <div><p class="text-muted">Thẻ</p>
+                <div class="mt-1 flex flex-wrap gap-2 rounded-xl border border-line bg-paper p-2">
+                  <span class="rounded-full bg-card px-2.5 py-1">hautruongbienkich ✕</span><span class="rounded-full bg-card px-2.5 py-1">phimngandoi ✕</span>
+                </div></div>
+              <div><p class="text-muted">Ảnh bìa</p>
+                <div class="mt-1 flex items-center gap-3 rounded-xl border border-dashed border-line p-3"><span class="h-12 w-20 rounded-lg bg-screen"></span><span>Alt: <em>Tập vai An tại nhà…</em> ✓</span></div></div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-line bg-card p-5" aria-labelledby="seoH">
+            <h2 id="seoH" class="font-semibold">SEO</h2>
+            <div class="mt-4 space-y-4 text-sm">
+              <div><label class="text-muted" for="slug">Đường dẫn</label>
+                <div class="mt-1 flex overflow-hidden rounded-xl border border-line bg-paper"><span class="shrink-0 px-2 py-2.5 text-muted">/hau-truong…/</span><input id="slug" value="khong-de-nguoi-khac-quyet-dinh-gioi-han" class="min-w-0 flex-1 bg-paper py-2.5 pr-2"></div></div>
+              <div><div class="flex justify-between"><label class="text-muted" for="seoTitle">Tiêu đề SEO</label><span id="seoTitleCount" class="font-semibold"></span></div>
+                <input id="seoTitle" data-max="60" value="Không để người khác quyết định giới hạn của bản thân" class="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5"></div>
+              <div><div class="flex justify-between"><label class="text-muted" for="seoDesc">Mô tả</label><span id="seoDescCount" class="font-semibold"></span></div>
+                <textarea id="seoDesc" data-max="155" rows="3" class="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5">Một câu chê thẳng mặt, hai ngày ra trường quay và vai diễn từng bị dự báo làm bể phim ĐỢI. Hậu trường biên kịch của Thanh Thanh.</textarea></div>
+
+              <div>
+                <p class="text-muted">Xem trước trên Google</p>
+                <div class="mt-1 rounded-xl border border-line bg-white p-3 text-left">
+                  <p class="truncate text-xs text-[#4d5156]">thanhthanh.vn › hau-truong-bien-kich</p>
+                  <p id="gTitle" class="truncate text-[17px] leading-snug text-[#1a0dab]"></p>
+                  <p id="gDesc" class="line-clamp-2 text-[13px] leading-snug text-[#4d5156]"></p>
+                </div>
+              </div>
+              <div>
+                <p class="text-muted">Xem trước khi chia sẻ Facebook</p>
+                <div class="mt-1 overflow-hidden rounded-xl border border-line bg-white text-left">
+                  <div class="aspect-[1.91/1] bg-[#1E1512]"></div>
+                  <div class="bg-[#F0F2F5] p-3"><p class="text-xs uppercase text-[#65676B]">thanhthanh.vn</p><p id="fbTitle" class="truncate font-semibold text-[#050505]"></p></div>
+                </div>
+              </div>
+
+              <div>
+                <p class="text-muted">Checklist SEO</p>
+                <ul class="mt-2 space-y-1.5">
+                  <li>✅ Có ảnh bìa và alt</li>
+                  <li>✅ Có 1 link nội bộ (trang phim ĐỢI)</li>
+                  <li id="ckTitle">✅ Tiêu đề trong giới hạn</li>
+                  <li id="ckDesc">✅ Mô tả trong giới hạn</li>
+                  <li id="ckWords">⚠️ Bài nên ≥ 300 từ</li>
+                </ul>
+              </div>
+              <label class="flex items-center gap-2"><input type="checkbox" class="h-5 w-5 accent-[var(--accent)]"> Không cho Google index (noindex)</label>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thanh hành động dính đáy (mobile) -->
+  <div class="fixed inset-x-0 bottom-[64px] z-30 flex gap-2 border-t border-line bg-paper px-4 py-2 sm:hidden">
+    <button class="min-h-[44px] flex-1 rounded-full border border-line text-sm font-semibold">Lưu nháp</button>
+    <button class="min-h-[44px] flex-1 rounded-full bg-accent text-sm font-semibold text-onaccent">Xuất bản</button>
+  </div>
+  <!-- Tab bar đáy (mobile/tablet) -->
+  <nav class="fixed inset-x-0 bottom-0 z-30 grid h-16 grid-cols-5 border-t border-line bg-card text-[11px] lg:hidden" aria-label="Menu quản trị">
+    <a href="#admin" class="flex flex-col items-center justify-center gap-0.5"><span class="text-lg" aria-hidden="true">▦</span>Tổng quan</a>
+    <a href="#admin" class="flex flex-col items-center justify-center gap-0.5 font-semibold text-accent" aria-current="page"><span class="text-lg" aria-hidden="true">☰</span>Bài viết</a>
+    <a href="#admin" class="flex flex-col items-center justify-center"><span class="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-2xl text-onaccent" aria-label="Viết bài mới">＋</span></a>
+    <a href="#admin" class="flex flex-col items-center justify-center gap-0.5"><span class="text-lg" aria-hidden="true">▣</span>Ảnh</a>
+    <a href="#admin" class="flex flex-col items-center justify-center gap-0.5"><span class="text-lg" aria-hidden="true">⋯</span>Thêm</a>
+  </nav>
+</div>
+
+</main>
+
+<!-- ================= FOOTER WEBSITE ================= -->
+<footer id="siteFooter" class="border-t border-line bg-card">
+  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-[2fr_1fr_1fr] md:px-6">
+    <div>
+      <p class="font-serif text-2xl font-bold">Thanh Thanh</p>
+      <p class="mt-2 max-w-sm text-sm leading-relaxed text-muted">Biên kịch. Người kể chuyện từ chiếc xe lăn. Phim ngắn ĐỢI, Chung kết Inspiring Asia 2026.</p>
+    </div>
+    <nav aria-label="Liên kết chân trang">
+      <p class="text-sm font-semibold">Khám phá</p>
+      <ul class="mt-3 space-y-2 text-sm text-muted">
+        <li><a href="#post" data-go="post" class="hover:text-accent">Hậu trường biên kịch</a></li>
+        <li><a href="#film" data-go="film" class="hover:text-accent">Phim</a></li>
+        <li><a href="#home" data-go="home" class="hover:text-accent">Giới thiệu</a></li>
+        <li><a href="#film" data-go="film" class="hover:text-accent">Press kit (EN)</a></li>
+      </ul>
+    </nav>
+    <div>
+      <p class="text-sm font-semibold">Kết nối</p>
+      <ul class="mt-3 space-y-2 text-sm text-muted"><li>Facebook</li><li>Threads</li><li>Email liên hệ</li></ul>
+    </div>
+  </div>
+  <p class="border-t border-line px-4 py-5 text-center text-xs text-muted">© 2026 Thanh Thanh. Bản xem trước giao diện, nội dung và hình ảnh minh họa.</p>
+</footer>
+
+<script>
+(function () {
+  // ----- Dữ liệu dòng thời gian (dùng chung trang chủ & trang phim) -----
+  var milestones = [
+    ['2 tuần', 'Tìm ý tưởng', 'Ngước theo Stutterer, This is John'],
+    ['1 tháng+', 'Viết & sửa kịch bản', 'Kèm hồ sơ dự thi'],
+    ['7 ngày', 'Làm hồ sơ pitching', 'Xem ~30 phim ngắn mỗi sáng'],
+    ['1 ngày', 'Pitching thành công', 'STT 4, đúng tinh thần ĐỢI'],
+    ['2 tuần', 'Chỉnh kịch bản', 'Cùng đội sản xuất'],
+    ['2 ngày', 'Lăn lội trường quay', 'Tay cháy nắng đỏ rực'],
+    ['Top 30', 'Giấy phép phân loại', 'Nộp online, ~10 ngày'],
+    ['10/2026', 'Chung kết Manila', 'Inspiring Asia 2026']
+  ];
+  var tl = milestones.map(function (m, i) {
+    var last = i === milestones.length - 1;
+    return '<li class="relative pl-10 pb-8 md:pl-0 md:pb-0">' +
+      '<span class="absolute left-[11px] top-0 h-full w-[2px] bg-line md:hidden' + (last ? ' hidden' : '') + '"></span>' +
+      '<span class="absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-full border-2 ' + (last ? 'border-accent bg-accent' : 'border-brass bg-paper') + ' md:static md:mb-3"></span>' +
+      '<p class="font-serif text-xl font-bold ' + (last ? 'text-accent' : '') + '">' + m[0] + '</p>' +
+      '<p class="mt-1 font-semibold">' + m[1] + '</p>' +
+      '<p class="mt-1 text-sm text-muted">' + m[2] + '</p></li>';
+  }).join('');
+  document.querySelectorAll('.timeline').forEach(function (el) {
+    el.innerHTML =
+      '<div class="hidden rounded-t-xl bg-screen px-2 pt-2 md:block"><div class="sprocket"></div></div>' +
+      '<ol class="md:grid md:grid-cols-4 md:gap-x-6 md:gap-y-10 md:border-x md:border-line md:bg-card md:p-8 xl:grid-cols-8 xl:gap-x-4">' + tl + '</ol>' +
+      '<div class="hidden rounded-b-xl bg-screen px-2 pb-2 md:block"><div class="sprocket"></div></div>';
+  });
+
+  // ----- Chuyển màn hình -----
+  var screens = ['home', 'post', 'film', 'admin'];
+  var header = document.getElementById('siteHeader');
+  var footer = document.getElementById('siteFooter');
+  function show(name) {
+    if (screens.indexOf(name) < 0) name = 'home';
+    screens.forEach(function (s) { document.getElementById('screen-' + s).hidden = s !== name; });
+    var isAdmin = name === 'admin';
+    header.hidden = isAdmin; footer.hidden = isAdmin;
+    document.querySelectorAll('.mock-tab').forEach(function (b) {
+      var on = b.dataset.go === name;
+      b.style.background = on ? '#D0566A' : 'transparent';
+      b.style.color = on ? '#1C1714' : '#EDE4D8';
+      b.setAttribute('aria-pressed', on);
+    });
+    closeMenu();
+    window.scrollTo(0, 0);
+    if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go]');
+    if (t) { e.preventDefault(); show(t.dataset.go); }
+  });
+
+  // ----- Menu di động -----
+  var menu = document.getElementById('mobileMenu'), menuBtn = document.getElementById('menuBtn');
+  function openMenu() { menu.classList.remove('hidden'); menu.classList.add('flex'); menuBtn.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; }
+  function closeMenu() { menu.classList.add('hidden'); menu.classList.remove('flex'); menuBtn.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; }
+  menuBtn.addEventListener('click', openMenu);
+  document.getElementById('menuClose').addEventListener('click', closeMenu);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+
+  // ----- Chế độ tối -----
+  var root = document.documentElement;
+  try { if (localStorage.getItem('tt-theme') === 'dark' || (!localStorage.getItem('tt-theme') && matchMedia('(prefers-color-scheme: dark)').matches)) root.classList.add('dark'); } catch (e) {}
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    root.classList.toggle('dark');
+    try { localStorage.setItem('tt-theme', root.classList.contains('dark') ? 'dark' : 'light'); } catch (e) {}
+  });
+
+  // ----- Sao chép link -----
+  document.querySelectorAll('.copy-link').forEach(function (b) {
+    b.addEventListener('click', function () { b.textContent = 'Đã sao chép ✓'; });
+  });
+
+  // ----- Admin: bộ đếm SEO, xem trước, đếm từ -----
+  function counter(input, out, ck) {
+    var max = +input.dataset.max;
+    function upd() {
+      var n = input.value.length, c = n > max ? '#B42318' : (n > max * 0.9 ? '#B54708' : '#2E7D32');
+      out.textContent = n + '/' + max; out.style.color = c;
+      ck.textContent = (n <= max ? '✅ ' : '❌ ') + ck.textContent.replace(/^\S+\s/, '');
+      document.getElementById('gTitle').textContent = document.getElementById('seoTitle').value + ' – Thanh Thanh';
+      document.getElementById('fbTitle').textContent = document.getElementById('seoTitle').value;
+      document.getElementById('gDesc').textContent = document.getElementById('seoDesc').value;
+    }
+    input.addEventListener('input', upd); upd();
+  }
+  counter(document.getElementById('seoTitle'), document.getElementById('seoTitleCount'), document.getElementById('ckTitle'));
+  counter(document.getElementById('seoDesc'), document.getElementById('seoDescCount'), document.getElementById('ckDesc'));
+
+  var body = document.getElementById('body'), preview = document.getElementById('bodyPreview');
+  function words() {
+    var n = body.value.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('wordCount').textContent = n;
+    document.getElementById('ckWords').textContent = (n >= 300 ? '✅ ' : '⚠️ ') + 'Bài nên ≥ 300 từ (hiện ' + n + ')';
+  }
+  body.addEventListener('input', function () { words(); document.getElementById('saveState').textContent = 'Chưa lưu…'; });
+  words();
+
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function md(src) {
+    return src.split(/\n{2,}/).map(function (b) {
+      b = esc(b.trim())
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>');
+      if (/^## /.test(b)) return '<h2>' + b.slice(3) + '</h2>';
+      if (/^&gt; /.test(b)) return '<blockquote>' + b.slice(5) + '</blockquote>';
+      return '<p>' + b + '</p>';
+    }).join('');
+  }
+  document.querySelectorAll('.etab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      var p = t.dataset.etab === 'preview';
+      if (p) preview.innerHTML = md(body.value);
+      body.classList.toggle('hidden', p); preview.classList.toggle('hidden', !p);
+      document.querySelectorAll('.etab').forEach(function (x) {
+        var on = x === t; x.classList.toggle('font-semibold', on);
+        x.style.background = on ? 'var(--accent)' : 'transparent'; x.style.color = on ? 'var(--onaccent)' : '';
+      });
+    });
+  });
+  document.querySelector('.etab[data-etab="write"]').click();
+
+  show(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
