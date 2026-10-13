@@ -47,6 +47,8 @@ final class Image
     public const FRAME_COVER = 16 / 9;
     public const FRAME_POSTER = 2.39;
     public const FRAME_SHARE = 1200 / 630;
+    /** Ảnh chân dung đầu trang chủ (.portrait__frame: aspect-ratio 4 / 5). */
+    public const FRAME_PORTRAIT = 4 / 5;
     public const SHARE_WIDTH = 1200;
     private const SHARE_QUALITY = 82;
     /**

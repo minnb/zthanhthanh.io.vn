@@ -18,8 +18,12 @@ final class HomeController
         $film = Film::featured();
         $blocks = Setting::json('home_blocks', []);
         $site = Site::info();
+        // Ảnh chân dung đầu trang (Cài đặt → hero_media_id); chỉ tra DB ở trang chủ. Không có/đã xóa -> hình minh họa của theme
+        $heroId = (int) Setting::get('hero_media_id', '');
+        $heroImage = $heroId > 0 ? Media::find($heroId) : null;
 
         return View::render('pages/home', [
+            'heroImage' => $heroImage,
             'title' => '',
             'jsonLd' => [Seo::websiteSchema($site), Seo::personSchema($site)],
             'description' => (string) Setting::get('mission_intro', ''),
