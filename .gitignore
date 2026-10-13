@@ -38,6 +38,10 @@ public/uploads/*
 !**/.gitkeep
 # .htaccess trong uploads chặn chạy PHP (security.md) => BẮT BUỘC phải được commit
 !public/uploads/.htaccess
+# Cho phép đồng bộ các ảnh bài viết ban đầu qua Git để khi git pull về hosting có ảnh ngay
+!public/uploads/2026/
+!public/uploads/2026/**
+
 
 # --- Log, file tạm, gói deploy ---
 *.log
