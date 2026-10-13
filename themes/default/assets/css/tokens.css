@@ -30,6 +30,15 @@
   /* Trạng thái (trang dev, admin) */
   --success: #2E7D32;
   --danger: #B42318;
+  --warning: #B54708;
+
+  /* Admin: khung xem trước kết quả Google/Facebook (mô phỏng màu của họ, không đổi theo chế độ tối) */
+  --serp-bg: #FFFFFF;
+  --serp-link: #1A0DAB;
+  --serp-text: #4D5156;
+  --fb-bg: #F0F2F5;
+  --fb-title: #050505;
+  --fb-host: #65676B;
 
   --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --fs-body: 1.0625rem;      /* 17px */
@@ -40,11 +49,18 @@
   --container: 72rem;
   --prose: 40rem;
   --gutter: 16px;
-  --radius-sm: 12px;
-  --radius: 24px;
-  --radius-lg: 28px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius: 18px;
+  --radius-lg: 24px;
   --tap: 44px;
   --header-h: 72px;
+
+  /* Surface Elevation & Soft Shadows (Vibe Coding) */
+  --shadow-xs: 0 1px 2px rgba(43, 33, 28, 0.04);
+  --shadow-sm: 0 1px 3px rgba(43, 33, 28, 0.06), 0 1px 2px rgba(43, 33, 28, 0.04);
+  --shadow-md: 0 4px 14px rgba(43, 33, 28, 0.07), 0 1px 3px rgba(43, 33, 28, 0.04);
+  --shadow-lg: 0 12px 28px rgba(43, 33, 28, 0.09), 0 3px 8px rgba(43, 33, 28, 0.04);
 
   color-scheme: light;
 }
@@ -59,6 +75,10 @@
     --paper: #1C1714; --card: #26201C; --ink: #EDE4D8; --muted: #B5A797;
     --line: #3A312B; --accent: #D0566A; --on-accent: #1C1714; --brass: #C9A66B;
     --screen: #120D0B;
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
     color-scheme: dark;
   }
 }
@@ -66,5 +86,9 @@
   --paper: #1C1714; --card: #26201C; --ink: #EDE4D8; --muted: #B5A797;
   --line: #3A312B; --accent: #D0566A; --on-accent: #1C1714; --brass: #C9A66B;
   --screen: #120D0B;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
   color-scheme: dark;
 }

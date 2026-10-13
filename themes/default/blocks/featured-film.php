@@ -16,7 +16,11 @@ $filmUrl = url('/phim/' . $featuredFilm['slug']);
   </div>
   <article class="film-feature">
     <a class="film-feature__media" href="<?= e($filmUrl) ?>" tabindex="-1" aria-hidden="true">
-      <?= partial('partials/art-poster', ['filmTitle' => (string) $featuredFilm['title'], 'caption' => (string) ($featuredFilm['caption'] ?? '')]) ?>
+      <?php if (!empty($featuredFilm['poster'])): ?>
+        <?= partial('partials/image', ['media' => $featuredFilm['poster'], 'ratio' => \App\Core\Image::FRAME_POSTER, 'sizes' => '(min-width: 1152px) 1104px, 100vw']) ?>
+      <?php else: ?>
+        <?= partial('partials/art-poster', ['filmTitle' => (string) $featuredFilm['title'], 'caption' => (string) ($featuredFilm['caption'] ?? '')]) ?>
+      <?php endif; ?>
       <?php if (!empty($featuredFilm['badge'])): ?><span class="badge"><?= e($featuredFilm['badge']) ?></span><?php endif; ?>
     </a>
     <div class="film-feature__body">

@@ -47,6 +47,12 @@ if ($path !== '/' && str_ends_with($path, '/')) {
     exit;
 }
 
+// Admin: không index, không cache ở trình duyệt/proxy (admin.md)
+if ($path === '/admin' || str_starts_with($path, '/admin/')) {
+    header('X-Robots-Tag: noindex, nofollow');
+    header('Cache-Control: no-store, private');
+}
+
 // Cache HTML (nếu bật): phục vụ ngay, không chạm DB
 $cacheKey = Cache::keyFor($method, $path, $query);
 if ($cacheKey !== null && ($cached = Cache::get($cacheKey)) !== null) {

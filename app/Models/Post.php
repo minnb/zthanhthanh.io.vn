@@ -80,6 +80,7 @@ final class Post
         $row['text'] = Markdown::htmlToText($row['html']);
         $row['reading_minutes'] = Markdown::readingMinutesFromText($row['text']);
         $row['tags'] = Tag::forPost((int) $row['id']);
+        $row['cover'] = $row['cover_media_id'] !== null ? Media::find((int) $row['cover_media_id']) : null;
         return $row;
     }
 
@@ -121,19 +122,25 @@ final class Post
     /**
      * Bài cho sitemap: công khai và không noindex.
      *
-     * @return list<array{url: string, lastmod: string}>
+     * @return list<array{url: string, lastmod: string, image: ?string}>
      */
     public static function forSitemap(): array
     {
         $rows = Db::all(
-            'SELECT p.slug, p.published_at, p.updated_at, c.slug AS category_slug
-             FROM posts p LEFT JOIN categories c ON c.id = p.category_id
+            'SELECT p.slug, p.published_at, p.updated_at, c.slug AS category_slug,
+                    m.id AS media_id, m.path AS media_path, m.width AS media_width
+             FROM posts p
+             LEFT JOIN categories c ON c.id = p.category_id
+             LEFT JOIN media m ON m.id = p.cover_media_id
              WHERE ' . self::PUBLIC_WHERE . ' AND p.noindex = 0
              ORDER BY p.published_at DESC'
         );
         return array_map(static fn (array $r): array => [
             'url' => self::url($r),
             'lastmod' => (string) ($r['updated_at'] ?: $r['published_at']),
+            'image' => $r['media_id'] !== null
+                ? Media::url(['path' => $r['media_path'], 'width' => $r['media_width']], 1440)
+                : null,
         ], $rows);
     }
 

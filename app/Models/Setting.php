@@ -28,6 +28,23 @@ final class Setting
         return json_last_error() === JSON_ERROR_NONE ? $value : $default;
     }
 
+    /** Lưu (thêm hoặc cập nhật) một cài đặt. */
+    public static function set(string $key, string $value): void
+    {
+        Db::query(
+            'INSERT INTO settings (`key`, `value`) VALUES (:k, :v) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
+            ['k' => $key, 'v' => $value]
+        );
+        self::$cache = null;
+    }
+
+    /** Thời điểm sửa cài đặt gần nhất (lastmod cho trang chủ trong sitemap). */
+    public static function lastModified(): ?string
+    {
+        $value = Db::value('SELECT MAX(updated_at) FROM settings');
+        return $value === null ? null : (string) $value;
+    }
+
     /** @return array<string, string> */
     private static function loadAll(): array
     {

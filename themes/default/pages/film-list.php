@@ -18,7 +18,11 @@
     <?php foreach ($films as $film): ?>
       <article class="film-card">
         <a class="film-card__media" href="<?= e(url($film['url'])) ?>" tabindex="-1" aria-hidden="true">
-          <?= partial('partials/art-poster', ['filmTitle' => (string) $film['title'], 'caption' => (string) $film['caption']]) ?>
+          <?php if (!empty($film['poster'])): ?>
+            <?= partial('partials/image', ['media' => $film['poster'], 'ratio' => \App\Core\Image::FRAME_POSTER, 'sizes' => '(min-width: 768px) 50vw, 100vw']) ?>
+          <?php else: ?>
+            <?= partial('partials/art-poster', ['filmTitle' => (string) $film['title'], 'caption' => (string) $film['caption']]) ?>
+          <?php endif; ?>
           <?php if (!empty($film['badge'])): ?><span class="badge"><?= e($film['badge']) ?></span><?php endif; ?>
         </a>
         <div class="film-card__body">

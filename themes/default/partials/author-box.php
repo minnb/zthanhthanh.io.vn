@@ -5,9 +5,14 @@
  * @var array<string, mixed> $site
  */
 $name = (string) ($site['authorName'] ?? $site['name'] ?? '');
+$avatar = (string) ($site['authorAvatar'] ?? '');
 ?>
 <aside class="author-box" aria-label="Về tác giả">
-  <span class="avatar" aria-hidden="true"><?= e(mb_substr($name, 0, 1)) ?></span>
+  <?php if ($avatar !== ''): ?>
+    <img class="avatar" src="<?= e(url($avatar)) ?>" alt="<?= e($name) ?>" width="48" height="48" style="object-fit:cover;border-radius:50%;">
+  <?php else: ?>
+    <span class="avatar" aria-hidden="true"><?= e(mb_substr($name, 0, 1)) ?></span>
+  <?php endif; ?>
   <div>
     <p class="author-box__name"><?= e($name) ?></p>
     <?php if (!empty($site['authorBio'])): ?><p class="author-box__bio"><?= e($site['authorBio']) ?></p><?php endif; ?>

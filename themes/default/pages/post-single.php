@@ -32,6 +32,13 @@ $authorName = (string) ($site['authorName'] ?? '');
     </div>
   </header>
 
+  <?php if (!empty($post['cover'])): ?>
+    <figure class="article__cover">
+      <?= partial('partials/image', ['media' => $post['cover'], 'ratio' => \App\Core\Image::FRAME_COVER, 'eager' => true, 'sizes' => '(min-width: 960px) 896px, 100vw']) ?>
+      <?php if (!empty($post['cover']['caption'])): ?><figcaption class="small muted"><?= e($post['cover']['caption']) ?></figcaption><?php endif; ?>
+    </figure>
+  <?php endif; ?>
+
   <div class="prose article__body">
     <?= $post['html'] /* đã render qua Markdown safeMode */ ?>
   </div>

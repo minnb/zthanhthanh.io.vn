@@ -13,7 +13,11 @@
   <div class="container">
     <?= partial('partials/breadcrumb', ['items' => $breadcrumb]) ?>
     <div class="film-hero__media">
-      <?= partial('partials/art-poster', ['filmTitle' => (string) $film['title'], 'caption' => (string) $film['caption']]) ?>
+      <?php if (!empty($film['poster'])): ?>
+        <?= partial('partials/image', ['media' => $film['poster'], 'ratio' => \App\Core\Image::FRAME_POSTER, 'eager' => true, 'sizes' => '(min-width: 1152px) 1104px, 100vw']) ?>
+      <?php else: ?>
+        <?= partial('partials/art-poster', ['filmTitle' => (string) $film['title'], 'caption' => (string) $film['caption']]) ?>
+      <?php endif; ?>
     </div>
     <div class="film-hero__grid">
       <div>

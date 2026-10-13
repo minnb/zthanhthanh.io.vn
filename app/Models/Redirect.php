@@ -57,6 +57,25 @@ final class Redirect
         return ['path' => $current, 'status' => $status];
     }
 
+    /**
+     * Thêm/cập nhật redirect 301 khi URL của nội dung đã xuất bản thay đổi (đổi slug/danh mục).
+     * - Đích mới đang là old_path của redirect khác -> xóa redirect đó (URL mới giờ là trang thật).
+     * - Các redirect đang trỏ về URL cũ được trỏ thẳng sang URL mới (làm phẳng chuỗi).
+     */
+    public static function add(string $oldPath, string $newPath): void
+    {
+        if ($oldPath === $newPath || !self::isInternal($oldPath) || !self::isInternal($newPath)) {
+            return;
+        }
+        Db::query('DELETE FROM redirects WHERE old_path = :new', ['new' => $newPath]);
+        Db::query('UPDATE redirects SET new_path = :new WHERE new_path = :old', ['new' => $newPath, 'old' => $oldPath]);
+        Db::query(
+            'INSERT INTO redirects (old_path, new_path, status_code) VALUES (:old, :new, 301)
+             ON DUPLICATE KEY UPDATE new_path = VALUES(new_path), status_code = 301',
+            ['old' => $oldPath, 'new' => $newPath]
+        );
+    }
+
     private static function isInternal(string $path): bool
     {
         return $path !== '' && $path[0] === '/' && !str_starts_with($path, '//');

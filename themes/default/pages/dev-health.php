@@ -4,6 +4,7 @@
  *
  * @var string $php
  * @var array<string, bool> $extensions
+ * @var array<string, string> $limits
  * @var array{ok: bool, error: string, version: string, tables: array<string, int>} $db
  * @var string $baseUrl
  * @var string $slugSample
@@ -16,6 +17,13 @@
 <table class="dev-table">
   <?php foreach ($extensions as $name => $loaded): ?>
     <tr><th><?= e($name) ?></th><td class="<?= $loaded ? 'ok' : 'bad' ?>"><?= $loaded ? 'Đã bật' : 'Chưa bật' ?></td></tr>
+  <?php endforeach; ?>
+</table>
+
+<h2 class="h-3">Giới hạn PHP (upload ảnh)</h2>
+<table class="dev-table">
+  <?php foreach ($limits as $name => $value): ?>
+    <tr><th><?= e($name) ?></th><td data-limit="<?= e($name) ?>"><?= e($value) ?></td></tr>
   <?php endforeach; ?>
 </table>
 

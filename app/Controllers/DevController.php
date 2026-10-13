@@ -22,7 +22,8 @@ final class DevController
         $db = SystemInfo::database();
 
         $extensions = [];
-        foreach (['pdo_mysql', 'mbstring', 'fileinfo', 'gd', 'intl'] as $ext) {
+        // exif: thiếu thì ảnh dọc chụp từ điện thoại bị nằm ngang (Image bỏ qua bước xoay)
+        foreach (['pdo_mysql', 'mbstring', 'fileinfo', 'gd', 'exif', 'intl'] as $ext) {
             $extensions[$ext] = extension_loaded($ext);
         }
 
@@ -30,6 +31,13 @@ final class DevController
             'title' => 'Chẩn đoán hệ thống',
             'php' => PHP_VERSION,
             'extensions' => $extensions,
+            // Giới hạn liên quan upload ảnh + bộ nhớ nền của một request web (sau bootstrap, session, DB)
+            'limits' => [
+                'memory_limit' => (string) ini_get('memory_limit'),
+                'upload_max_filesize' => (string) ini_get('upload_max_filesize'),
+                'post_max_size' => (string) ini_get('post_max_size'),
+                'Bộ nhớ nền request web' => sprintf('%.1f MB', memory_get_usage(true) / 1048576),
+            ],
             'db' => $db,
             'baseUrl' => (string) Config::get('base_url'),
             'slugSample' => Slug::make('Phim ngắn ĐỢI: Không để người khác quyết định giới hạn của bản thân!'),
@@ -74,6 +82,37 @@ final class DevController
             'noindex' => true,
             'film' => $film,
         ], null);
+    }
+
+    /**
+     * Xem trước giao diện admin để chụp màn hình (chỉ local). KHÔNG đăng nhập ai: chỉ render template
+     * với người dùng giả; mọi form vẫn gửi tới endpoint thật, nơi bắt đăng nhập + CSRF như thường.
+     */
+    public function admin(string $screen): string
+    {
+        if (!Config::isLocal()) {
+            throw HttpException::notFound();
+        }
+        $base = ['user' => ['id' => 0, 'name' => 'Xem thử giao diện', 'role' => 'admin'], 'flash' => [], 'csrf' => 'dev-preview', 'noindex' => true];
+        $firstPost = (int) (\App\Core\Db::value('SELECT id FROM posts WHERE deleted_at IS NULL ORDER BY id LIMIT 1') ?? 0);
+        $data = match ($screen) {
+            'dashboard' => ['template' => 'dashboard', 'title' => 'Tổng quan', 'counts' => \App\Models\AdminPost::counts(),
+                'recent' => \App\Models\AdminPost::recent(5), 'warnings' => \App\Models\AdminPost::seoWarnings(8)],
+            'posts' => ['template' => 'posts/index', 'title' => 'Bài viết',
+                'filters' => ['q' => '', 'status' => '', 'category' => 0, 'source' => '', 'trash' => false],
+                'result' => \App\Models\AdminPost::paginate([], 1), 'page' => 1,
+                'categories' => \App\Models\Category::all(), 'counts' => \App\Models\AdminPost::counts()],
+            'edit' => ['template' => 'posts/edit', 'title' => 'Sửa bài', 'post' => \App\Models\AdminPost::find($firstPost) ?? throw HttpException::notFound(),
+                'errors' => [], 'categories' => \App\Models\Category::all(), 'statuses' => \App\Models\AdminPost::STATUSES, 'publicUrl' => null],
+            'media' => ['template' => 'media/index', 'title' => 'Thư viện ảnh', 'result' => (static function (): array { $r = \App\Models\Media::paginate(1); $r['items'] = \App\Controllers\Admin\MediaController::libraryItems($r['items']); return $r; })(), 'page' => 1, 'pages' => 1, 'q' => ''],
+            'film' => ['template' => 'films/edit', 'title' => 'Phim', 'film' => \App\Models\AdminFilm::find(1) ?? throw HttpException::notFound(),
+                'errors' => [], 'statuses' => \App\Models\AdminFilm::STATUSES, 'milestones' => \App\Models\AdminFilm::milestones(1)],
+            'more' => ['template' => 'more', 'title' => 'Thêm'],
+            default => throw HttpException::notFound(),
+        };
+        $template = $data['template'];
+        unset($data['template']);
+        return View::render('admin/' . $template, $data + $base, 'layouts/admin');
     }
 
     /** Thư viện giao diện: xem trước các partial với dữ liệu mẫu. */

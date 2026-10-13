@@ -27,7 +27,7 @@ INSERT INTO settings (`key`, `value`) VALUES
 ('achievements', '[{"value":"Chung kết","label":"Inspiring Asia 2026 · Manila"},{"value":"Chung kết","label":"Inspiring Vietnam 2026 · SIHUB"},{"value":"Top 7","label":"From Script to Screen mùa 1"}]');
 
 -- Phim
-INSERT INTO films (slug, title, title_en, logline, genre, duration_min, duration_note, year, credits_md, awards_md, badge, related_tag, status, is_featured, sort_order) VALUES
+INSERT INTO films (slug, title, title_en, logline, genre, duration_min, duration_note, year, credits_md, awards_md, badge, related_tag, actors, status, is_featured, sort_order) VALUES
 ('doi', 'ĐỢI', 'WAITING',
  'An giam mình trong chiếc lồng tâm lý mang tên chờ đợi người khác, và trong chính lựa chọn của mình. Phải qua hết những điều ấy, cô mới tìm được lối ra.',
  'Phim ngắn · Chính kịch', 8, '6 phút (bản dự thi)', 2026,
@@ -37,13 +37,13 @@ INSERT INTO films (slug, title, title_en, logline, genre, duration_min, duration
  '- Chung kết Inspiring Asia 2026, Manila, Philippines
 - Bán kết Inspiring Asia 2026: 1 trong 4 đại diện Việt Nam
 - Chung kết Inspiring Vietnam 2026, SIHUB, TP.HCM',
- 'Chung kết Inspiring Asia 2026 · Manila', 'phimngandoi',
+ 'Chung kết Inspiring Asia 2026 · Manila', 'phimngandoi', 'Thanh Thanh',
  'released', 1, 1),
 ('dua-con-den-tu-coi-am', 'Đứa con đến từ cõi âm', NULL,
  'Dự án phim điện ảnh đầu tay, lọt Top 7 From Script to Screen mùa 1.',
  'Phim điện ảnh', NULL, NULL, NULL, NULL,
  '- Top 7 From Script to Screen mùa 1',
- 'Top 7 From Script to Screen', NULL,
+ 'Top 7 From Script to Screen', NULL, NULL,
  'in_development', 0, 2);
 
 -- Dòng thời gian phim ĐỢI

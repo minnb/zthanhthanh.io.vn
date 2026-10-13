@@ -8,6 +8,7 @@ use App\Core\Markdown;
 use App\Core\Seo;
 use App\Core\View;
 use App\Models\Category;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\Site;
 use App\Models\Tag;
@@ -24,7 +25,7 @@ final class PostController
         Pagination::assertInRange($page, $result['pages']);
 
         return View::render('pages/post-list', [
-            'title' => (string) ($cat['seo_title'] ?: $cat['name']) . ($page > 1 ? ' – Trang ' . $page : ''),
+            'title' => Seo::pagedTitle((string) ($cat['seo_title'] ?: $cat['name']), $page),
             'description' => (string) ($cat['seo_desc'] ?: $cat['description']),
             // Danh mục chưa có bài là trang mỏng -> không cho index (khớp sitemap)
             'noindex' => $result['total'] === 0,
@@ -43,6 +44,7 @@ final class PostController
     {
         $post = Post::findPublished($category, $slug) ?? throw HttpException::notFound();
         $description = Seo::description((string) ($post['seo_desc'] ?: ($post['excerpt'] ?: Markdown::excerpt($post['text'], 155))));
+        $share = $post['cover'] ? Media::shareImage($post['cover']) : null;
 
         return View::render('pages/post-single', [
             'title' => (string) ($post['seo_title'] ?: $post['title']),
@@ -50,6 +52,11 @@ final class PostController
             'noindex' => (bool) $post['noindex'],
             'canonicalPath' => (string) $post['url'],
             'ogType' => 'article',
+            // Ảnh chia sẻ Facebook 1200×630 cắt quanh điểm tâm (Media::shareImage)
+            'image' => $share['url'] ?? '',
+            'imageWidth' => $share['width'] ?? 0,
+            'imageHeight' => $share['height'] ?? 0,
+            'imageAlt' => $post['cover'] ? (string) $post['cover']['alt'] : '',
             'publishedAt' => (string) $post['published_at'],
             'modifiedAt' => (string) ($post['updated_at'] ?: $post['published_at']),
             'jsonLd' => [Seo::blogPostingSchema($post, Site::info(), $description)],
@@ -73,7 +80,7 @@ final class PostController
         Pagination::assertInRange($page, $result['pages']);
 
         return View::render('pages/post-list', [
-            'title' => 'Chủ đề #' . $t['name'] . ($page > 1 ? ' – Trang ' . $page : ''),
+            'title' => Seo::pagedTitle('Chủ đề #' . $t['name'], $page),
             'description' => 'Các bài viết của Thanh Thanh về chủ đề #' . $t['name'] . '.',
             // Trang tag ít bài là nội dung mỏng -> không cho index (quy tắc SEO)
             'noindex' => $result['total'] < 3,

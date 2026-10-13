@@ -30,7 +30,7 @@ final class PageController
         return View::render('pages/press-kit', [
             'lang' => 'en',
             'title' => (string) ($page['seo_title'] ?: 'Press kit'),
-            'description' => (string) ($page['seo_desc'] ?: Markdown::excerpt(Markdown::toText((string) $page['body_md']), 155)),
+            'description' => (string) ($page['seo_desc'] ?: Markdown::excerpt(Markdown::htmlToText((string) $page['html']), 155)),
             'canonicalPath' => Page::path($page),
             'alternates' => Page::alternates($page),
             'page' => $page,
@@ -45,7 +45,7 @@ final class PageController
 
         return View::render('pages/page', [
             'title' => (string) ($page['seo_title'] ?: $page['title']),
-            'description' => (string) ($page['seo_desc'] ?: Markdown::excerpt(Markdown::toText((string) $page['body_md']), 155)),
+            'description' => (string) ($page['seo_desc'] ?: Markdown::excerpt(Markdown::htmlToText((string) $page['html']), 155)),
             'canonicalPath' => Page::path($page),
             'alternates' => Page::alternates($page),
             'page' => $page,

@@ -1,5 +1,16 @@
 {
-    "app.css": "f34a1ac88f",
+    "fonts/be-vietnam-pro-400-latin-ext.woff2": "f7a2811e47",
+    "fonts/be-vietnam-pro-400-latin.woff2": "03d1b589cf",
+    "fonts/be-vietnam-pro-400-vietnamese.woff2": "dc085e2fba",
+    "fonts/be-vietnam-pro-400i-latin-ext.woff2": "ce621999bb",
+    "fonts/be-vietnam-pro-400i-latin.woff2": "1b7f08408c",
+    "fonts/be-vietnam-pro-400i-vietnamese.woff2": "069ca98365",
+    "fonts/be-vietnam-pro-600-latin-ext.woff2": "20cc75daea",
+    "fonts/be-vietnam-pro-600-latin.woff2": "9503dec2a7",
+    "fonts/be-vietnam-pro-600-vietnamese.woff2": "97658c6f9a",
+    "app.css": "86da061baf",
+    "admin.css": "2e5d97e9b3",
     "app.js": "c5eb0424ac",
+    "admin.js": "a6a251d0d4",
     "img/og-default.png": "e515c2407a"
 }

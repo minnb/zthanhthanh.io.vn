@@ -19,6 +19,7 @@ final class Site
             'authorBio' => Setting::get('author_bio', ''),
             'contactEmail' => Setting::get('contact_email', ''),
             'ogImage' => Setting::get('default_og_image', ''),
+            'authorAvatar' => Setting::get('author_avatar', ''),
             'social' => array_filter([
                 'Facebook' => Setting::get('social_facebook', ''),
                 'Threads' => Setting::get('social_threads', ''),
@@ -36,7 +37,7 @@ final class Site
     {
         return [
             'name' => 'Thanh Thanh', 'tagline' => 'Biên kịch', 'mission' => '', 'missionIntro' => '',
-            'authorName' => 'Thanh Thanh', 'authorBio' => '', 'contactEmail' => '', 'ogImage' => '', 'social' => [], 'menu' => [],
+            'authorName' => 'Thanh Thanh', 'authorBio' => '', 'contactEmail' => '', 'ogImage' => '', 'authorAvatar' => '', 'social' => [], 'menu' => [],
         ];
     }
 }

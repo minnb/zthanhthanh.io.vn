@@ -7,20 +7,29 @@ use App\Core\Config;
 use App\Core\Seo;
 use App\Models\Category;
 use App\Models\Film;
+use App\Models\Media;
 use App\Models\Page;
 use App\Models\Post;
+use App\Models\Setting;
 use App\Models\Site;
 use App\Models\Tag;
 
 /** /sitemap.xml, /robots.txt, /feed.xml */
 final class SeoController
 {
-    /** Sitemap chỉ gồm trang được index (không có trang noindex, nháp, dev, admin). */
+    /**
+     * Sitemap chỉ gồm trang được index (không có trang noindex, nháp, dev, admin).
+     * Bài có ảnh bìa và phim có poster kèm <image:image> (image sitemap).
+     */
     public function sitemap(): string
     {
         header('Content-Type: application/xml; charset=utf-8');
 
-        $entries = [['/', Post::lastModified()]];
+        // Trang chủ đổi khi có bài mới, sửa phim/dòng thời gian hoặc sửa cài đặt (sứ mệnh, thành tích...)
+        $homeDates = array_filter([Post::lastModified(), Film::lastModified(), Setting::lastModified()]);
+        $homeLastmod = $homeDates === [] ? null : max(array_map('strtotime', $homeDates));
+        /** @var list<array{0: string, 1: ?string, 2?: ?string}> $entries [path, lastmod, ảnh] */
+        $entries = [['/', $homeLastmod ? date('Y-m-d H:i:s', $homeLastmod) : null]];
         foreach (Category::all() as $cat) {
             $lastmod = Post::lastModified((int) $cat['id']);
             if ($lastmod !== null) { // danh mục chưa có bài là noindex -> không đưa vào sitemap
@@ -28,26 +37,32 @@ final class SeoController
             }
         }
         foreach (Post::forSitemap() as $post) {
-            $entries[] = [$post['url'], $post['lastmod']];
+            $entries[] = [$post['url'], $post['lastmod'], $post['image']];
         }
         foreach (Tag::indexable(3) as $tag) {
             $entries[] = ['/chu-de/' . $tag['slug'], null];
         }
         $entries[] = ['/phim', null];
         foreach (Film::all() as $film) {
-            $entries[] = [(string) $film['url'], (string) $film['updated_at']];
+            $poster = !empty($film['poster']) ? Media::url($film['poster'], 1440) : null;
+            $entries[] = [(string) $film['url'], (string) $film['updated_at'], $poster];
         }
         foreach (Page::allPublished() as $page) {
             $entries[] = [Page::path($page), (string) $page['updated_at']];
         }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
-            . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-        foreach ($entries as [$path, $lastmod]) {
+            . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . "\n";
+        foreach ($entries as $entry) {
+            [$path, $lastmod] = $entry;
+            $image = $entry[2] ?? null;
             $xml .= '  <url><loc>' . self::xml(url($path)) . '</loc>';
             $iso = $lastmod ? Seo::isoDate($lastmod) : '';
             if ($iso !== '') {
                 $xml .= '<lastmod>' . $iso . '</lastmod>';
+            }
+            if ($image) {
+                $xml .= '<image:image><image:loc>' . self::xml(url($image)) . '</image:loc></image:image>';
             }
             $xml .= "</url>\n";
         }

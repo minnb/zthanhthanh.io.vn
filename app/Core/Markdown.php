@@ -15,20 +15,63 @@ final class Markdown
 
     public static function toHtml(string $markdown): string
     {
+        return self::render($markdown, true);
+    }
+
+    /** $enrichImages = false: bỏ bước tra DB ảnh (toText chỉ cần chữ – tránh N+1 ở danh sách bài). */
+    private static function render(string $markdown, bool $enrichImages): string
+    {
         if (self::$parser === null) {
             require_once APP_ROOT . '/app/Lib/Parsedown.php';
             self::$parser = (new Parsedown())->setSafeMode(true)->setBreaksEnabled(true);
         }
         $html = self::$parser->text($markdown);
 
+        if ($enrichImages) {
+            $html = self::enrichLibraryImages($html);
+        }
+        // Ảnh thư viện chèn vào bài lưu dạng "/uploads/..." (độc lập domain) -> URL đầy đủ theo base_url
+        $html = str_replace(' src="/uploads/', ' src="' . url('/uploads/'), $html);
+        // Link nội bộ "/phim/doi" -> URL đầy đủ (site có thể nằm trong thư mục con, vd XAMPP local)
+        $html = (string) preg_replace_callback(
+            '#<a href="(/(?!/)[^"]*)"#',
+            // decode để url() xử lý đúng, rồi escape lại bằng e() trước khi đặt vào thuộc tính (chống XSS)
+            static fn (array $m): string => '<a href="' . e(url(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'))) . '"',
+            $html
+        );
         // Ảnh trong bài: tải lười, giải mã bất đồng bộ (ảnh LCP của trang là ảnh bìa, không nằm trong bài)
         return str_replace('<img ', '<img loading="lazy" decoding="async" ', $html);
+    }
+
+    /**
+     * Ảnh thư viện chèn trong nội dung (`<img src="/uploads/<path>-<rộng>.webp">`): gắn width/height (chống nhảy
+     * bố cục – CLS) và srcset/sizes (điện thoại tải bản 480). Tra media bằng một truy vấn; ảnh ngoài thư viện giữ nguyên.
+     */
+    private static function enrichLibraryImages(string $html): string
+    {
+        $pattern = '#<img src="/uploads/([0-9]{4}/[0-9]{2}/[a-z0-9-]+)-[0-9]+\.webp"#';
+        if (!preg_match_all($pattern, $html, $found)) {
+            return $html;
+        }
+        $media = \App\Models\Media::findByPaths(array_values(array_unique($found[1])));
+        if ($media === []) {
+            return $html;
+        }
+        return (string) preg_replace_callback($pattern, static function (array $m) use ($media): string {
+            $row = $media[$m[1]] ?? null;
+            if ($row === null) {
+                return $m[0];
+            }
+            $img = \App\Models\Media::imageData($row);
+            return '<img src="' . e($img['src']) . '" srcset="' . e($img['srcset']) . '" sizes="(min-width: 760px) 720px, 100vw"'
+                . ' width="' . $img['width'] . '" height="' . $img['height'] . '"';
+        }, $html);
     }
 
     /** Văn bản thuần (bỏ cú pháp Markdown) – dùng cho excerpt, meta description, đếm từ. */
     public static function toText(string $markdown): string
     {
-        return self::htmlToText(self::toHtml($markdown));
+        return self::htmlToText(self::render($markdown, false));
     }
 
     /** Văn bản thuần từ HTML đã render (dùng lại kết quả toHtml, tránh render lần 2). */

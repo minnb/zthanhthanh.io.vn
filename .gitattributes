@@ -1,0 +1,2 @@
+# Script chạy trên Linux (hosting) phải dùng LF, nếu không bash báo lỗi "\r: command not found".
+*.sh text eol=lf

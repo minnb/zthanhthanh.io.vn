@@ -92,6 +92,8 @@ CREATE TABLE media (
   size_bytes    INT UNSIGNED NULL,
   alt           VARCHAR(255) NOT NULL DEFAULT '',
   caption       VARCHAR(255) NULL,
+  focus_x       TINYINT UNSIGNED NOT NULL DEFAULT 50,  -- điểm tâm (%) giữ trong khung khi cắt ảnh; tự dò lúc upload
+  focus_y       TINYINT UNSIGNED NOT NULL DEFAULT 50,
   uploaded_by   INT UNSIGNED NULL,
   created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -122,6 +124,7 @@ CREATE TABLE posts (
   UNIQUE KEY uq_posts_slug (slug),
   KEY idx_posts_public (status, deleted_at, published_at),
   KEY idx_posts_category (category_id),
+  UNIQUE KEY uq_posts_source_ref (source_ref),   -- tool đăng bài: 1 bài gốc = 1 bài web (NULL không bị ràng buộc)
   CONSTRAINT fk_posts_cover FOREIGN KEY (cover_media_id) REFERENCES media (id) ON DELETE SET NULL,
   CONSTRAINT fk_posts_category FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL,
   CONSTRAINT fk_posts_author FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE SET NULL
@@ -153,9 +156,12 @@ CREATE TABLE post_revisions (
   user_id    INT UNSIGNED NULL,
   title      VARCHAR(255) NOT NULL,
   body_md    MEDIUMTEXT NOT NULL,
+  -- 1 = bản nháp tự lưu của bài ĐÃ xuất bản (chưa ra ngoài web). Mỗi bài tối đa 1 bản, xóa khi bấm Cập nhật.
+  is_autosave TINYINT(1) NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   KEY idx_revisions_post (post_id, created_at),
+  KEY idx_revisions_autosave (post_id, is_autosave),
   CONSTRAINT fk_revisions_post FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE,
   CONSTRAINT fk_revisions_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

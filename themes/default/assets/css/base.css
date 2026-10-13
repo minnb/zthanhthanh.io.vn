@@ -2,6 +2,8 @@
    Base: reset, typography, prose (nội dung bài viết), a11y
    ========================================================== */
 *, *::before, *::after { box-sizing: border-box; }
+/* Thuộc tính hidden luôn thắng các rule display (img/btn...) */
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   margin: 0;

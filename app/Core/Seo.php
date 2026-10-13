@@ -30,6 +30,19 @@ final class Seo
         return mb_strlen($full) <= self::TITLE_MAX ? $full : self::limit($pageTitle, self::TITLE_MAX);
     }
 
+    /**
+     * Tiêu đề trang danh sách có phân trang: cắt phần tên trước, rồi mới nối " – Trang N",
+     * để hậu tố số trang không bao giờ bị Seo::title cắt mất (tránh title trùng giữa các trang).
+     */
+    public static function pagedTitle(string $base, int $page): string
+    {
+        if ($page <= 1) {
+            return $base;
+        }
+        $suffix = ' – Trang ' . $page;
+        return self::limit($base, self::TITLE_MAX - mb_strlen($suffix)) . $suffix;
+    }
+
     public static function description(?string $text): string
     {
         $text = trim((string) preg_replace('/\s+/u', ' ', (string) $text));
@@ -87,9 +100,20 @@ final class Seo
         $tags[] = self::meta('property', 'og:url', $canonical);
         if ($image !== '') {
             $tags[] = self::meta('property', 'og:image', $image);
-            if (!isset($v['image']) || $v['image'] === '') {
+            // Kích thước: ảnh trang (từ thư viện) truyền imageWidth/imageHeight; ảnh mặc định của theme là 1200×630.
+            // Ảnh từ setting default_og_image: không chắc kích thước -> không khai báo.
+            $usesThemeDefault = (string) ($v['image'] ?? '') === '' && (string) ($site['ogImage'] ?? '') === '';
+            $imgW = (int) ($v['imageWidth'] ?? 0);
+            $imgH = (int) ($v['imageHeight'] ?? 0);
+            if ((string) ($v['image'] ?? '') !== '' && $imgW > 0 && $imgH > 0) {
+                $tags[] = self::meta('property', 'og:image:width', (string) $imgW);
+                $tags[] = self::meta('property', 'og:image:height', (string) $imgH);
+            } elseif ($usesThemeDefault) {
                 $tags[] = self::meta('property', 'og:image:width', (string) self::OG_IMAGE_WIDTH);
                 $tags[] = self::meta('property', 'og:image:height', (string) self::OG_IMAGE_HEIGHT);
+            }
+            if ((string) ($v['imageAlt'] ?? '') !== '') {
+                $tags[] = self::meta('property', 'og:image:alt', (string) $v['imageAlt']);
             }
         }
         if (!empty($v['publishedAt'])) {
@@ -167,7 +191,7 @@ final class Seo
             'dateModified' => self::isoDate((string) ($post['updated_at'] ?: $post['published_at'])),
             'author' => ['@type' => 'Person', 'name' => (string) ($site['authorName'] ?? ''), 'url' => url('/gioi-thieu')],
             'publisher' => ['@id' => url('/') . '#person'],
-            'image' => [self::defaultImage($site)],
+            'image' => [!empty($post['cover']) ? url(\App\Models\Media::url($post['cover'], 1440)) : self::defaultImage($site)],
             'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => $postUrl],
             'url' => $postUrl,
             'inLanguage' => 'vi',
@@ -184,6 +208,14 @@ final class Seo
     public static function movieSchema(array $film, array $site): array
     {
         $author = ['@type' => 'Person', 'name' => (string) ($site['authorName'] ?? ''), 'url' => url('/gioi-thieu')];
+        // Diễn viên lấy từ films.actors (không suy đoán tác giả có đóng hay không)
+        $actors = [];
+        foreach (explode(',', (string) ($film['actors'] ?? '')) as $name) {
+            $name = trim($name);
+            if ($name !== '') {
+                $actors[] = ['@type' => 'Person', 'name' => $name];
+            }
+        }
         $awards = [];
         foreach (preg_split('/\R/u', (string) ($film['awards_md'] ?? '')) ?: [] as $line) {
             $line = trim(ltrim(trim($line), '-*'));
@@ -198,13 +230,13 @@ final class Seo
             'alternateName' => (string) ($film['title_en'] ?? ''),
             'url' => url((string) $film['url']),
             'description' => (string) ($film['logline'] ?? ''),
-            'image' => self::defaultImage($site),
+            'image' => !empty($film['poster']) ? url(\App\Models\Media::url($film['poster'], 1440)) : self::defaultImage($site),
             'genre' => (string) ($film['genre'] ?? ''),
             'duration' => !empty($film['duration_min']) ? 'PT' . (int) $film['duration_min'] . 'M' : '',
             'dateCreated' => !empty($film['year']) ? (string) $film['year'] : '',
             'inLanguage' => 'vi',
             'author' => $author,
-            'actor' => $film['status'] === 'released' ? $author : [],
+            'actor' => $actors,
             'award' => $awards,
         ], static fn ($value) => $value !== '' && $value !== []);
     }
