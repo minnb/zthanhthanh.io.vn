@@ -150,6 +150,9 @@ final class Media
         if ((int) Db::value("SELECT COUNT(*) FROM settings WHERE `key` = 'default_og_image' AND `value` LIKE :u", ['u' => $prefix]) > 0) {
             $uses[] = 'Ảnh chia sẻ mặc định (Cài đặt)';
         }
+        if ((int) Db::value("SELECT COUNT(*) FROM settings WHERE `key` = 'hero_media_id' AND `value` = :id", ['id' => (string) $id]) > 0) {
+            $uses[] = 'Ảnh chân dung đầu trang chủ (Cài đặt)';
+        }
         foreach (Db::all('SELECT title FROM posts WHERE body_md LIKE :p AND deleted_at IS NULL', ['p' => $prefix]) as $row) {
             $uses[] = 'Trong nội dung bài: ' . $row['title'];
         }

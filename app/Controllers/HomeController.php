@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Core\Seo;
 use App\Core\View;
 use App\Models\Film;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\Setting;
 use App\Models\Site;

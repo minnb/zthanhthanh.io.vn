@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Core\Cache;
+use App\Core\Image;
 use App\Core\Request;
+use App\Models\Media;
 use App\Models\Setting;
 
 /** Cài đặt site – chỉ admin (admin.md). */
@@ -22,6 +24,8 @@ final class SettingsController extends AdminController
         'social_facebook' => ['Facebook (https://…)', 'url', 255],
         'social_threads' => ['Threads (https://…)', 'url', 255],
         'default_og_image' => ['Ảnh chia sẻ mặc định (đường dẫn ảnh trong thư viện, để trống = ảnh của theme)', 'path', 255],
+        // Chọn từ Thư viện ảnh; lưu id ảnh. Để trống = hình minh họa của theme
+        'hero_media_id' => ['Ảnh chân dung đầu trang chủ (khung dọc 4:5)', 'media', 10],
     ];
 
     public function edit(): string
@@ -50,6 +54,8 @@ final class SettingsController extends AdminController
                 $errors[$key] = 'Link phải bắt đầu bằng https://';
             } elseif ($value !== '' && $type === 'path' && !preg_match('#^/uploads/[a-z0-9/_-]+\.webp$#', $value)) {
                 $errors[$key] = 'Dán đường dẫn ảnh dạng /uploads/…webp (lấy ở Thư viện ảnh).';
+            } elseif ($value !== '' && $type === 'media' && (!ctype_digit($value) || Media::find((int) $value) === null)) {
+                $errors[$key] = 'Ảnh không còn tồn tại, hãy chọn lại.';
             }
         }
         if ($values['site_name'] === '') {
@@ -85,6 +91,30 @@ final class SettingsController extends AdminController
             'fields' => self::FIELDS,
             'values' => $values,
             'errors' => $errors,
+            'previews' => self::previews($values),
         ]);
+    }
+
+    /**
+     * Ảnh đã chọn cho các ô kiểu 'media': xem trước đúng khung 4:5 + điểm tâm (template chỉ if/foreach – theme-ui.md).
+     * Public để trang xem thử /_dev/admin/settings dùng chung.
+     *
+     * @param array<string, string> $values
+     * @return array<string, array{thumb: string, position: string, share: string}>
+     */
+    public static function previews(array $values): array
+    {
+        $previews = [];
+        foreach (self::FIELDS as $key => [, $type]) {
+            $media = $type === 'media' && ($values[$key] ?? '') !== '' ? Media::find((int) $values[$key]) : null;
+            if ($media !== null) {
+                $previews[$key] = [
+                    'thumb' => url(Media::url($media, 480)),
+                    'position' => Media::framePosition($media, Image::FRAME_PORTRAIT),
+                    'share' => Media::framePosition($media, Image::FRAME_SHARE),
+                ];
+            }
+        }
+        return $previews;
     }
 }

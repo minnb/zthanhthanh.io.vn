@@ -5,6 +5,7 @@
  *
  * @var array<string, mixed> $site
  * @var array<string, mixed>|null $featuredFilm
+ * @var array<string, mixed>|null $heroImage Ảnh chân dung (Cài đặt → hero_media_id); null = hình minh họa của theme
  */
 $mission = (string) ($site['mission'] ?? '');
 $highlight = 'người ngồi xe lăn';
@@ -27,7 +28,14 @@ $missionHtml = str_contains($mission, $highlight)
     </div>
   </div>
   <figure class="portrait">
-    <div class="portrait__frame"><?= partial('partials/art-portrait') ?></div>
+    <div class="portrait__frame">
+      <?php if (!empty($heroImage)): ?>
+        <?php /* Ảnh đầu trang là ứng viên LCP -> eager + fetchpriority high; khung 4:5 cắt quanh điểm tâm của ảnh */ ?>
+        <?= partial('partials/image', ['media' => $heroImage, 'ratio' => \App\Core\Image::FRAME_PORTRAIT, 'eager' => true, 'sizes' => '(min-width: 768px) 460px, (min-width: 400px) 384px, 100vw']) ?>
+      <?php else: ?>
+        <?= partial('partials/art-portrait') ?>
+      <?php endif; ?>
+    </div>
     <?php if ($featuredFilm && !empty($featuredFilm['badge'])): ?>
       <figcaption class="portrait__note"><span>Mới nhất</span><?= e($featuredFilm['title'] . ' vào ' . $featuredFilm['badge']) ?></figcaption>
     <?php endif; ?>

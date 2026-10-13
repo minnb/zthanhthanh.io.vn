@@ -107,6 +107,14 @@ final class DevController
             'media' => ['template' => 'media/index', 'title' => 'Thư viện ảnh', 'result' => (static function (): array { $r = \App\Models\Media::paginate(1); $r['items'] = \App\Controllers\Admin\MediaController::libraryItems($r['items']); return $r; })(), 'page' => 1, 'pages' => 1, 'q' => ''],
             'film' => ['template' => 'films/edit', 'title' => 'Phim', 'film' => \App\Models\AdminFilm::find(1) ?? throw HttpException::notFound(),
                 'errors' => [], 'statuses' => \App\Models\AdminFilm::STATUSES, 'milestones' => \App\Models\AdminFilm::milestones(1)],
+            'settings' => (static function (): array {
+                $values = [];
+                foreach (array_keys(\App\Controllers\Admin\SettingsController::FIELDS) as $key) {
+                    $values[$key] = (string) \App\Models\Setting::get($key, '');
+                }
+                return ['template' => 'settings', 'title' => 'Cài đặt', 'fields' => \App\Controllers\Admin\SettingsController::FIELDS,
+                    'values' => $values, 'errors' => [], 'previews' => \App\Controllers\Admin\SettingsController::previews($values)];
+            })(),
             'more' => ['template' => 'more', 'title' => 'Thêm'],
             default => throw HttpException::notFound(),
         };

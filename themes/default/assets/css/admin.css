@@ -607,8 +607,8 @@ body.admin {
   margin: 0;
   padding: 8px 12px 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
   align-items: end;
 }
 .focus-frame { display: grid; gap: 2px; text-align: center; }

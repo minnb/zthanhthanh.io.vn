@@ -306,6 +306,36 @@ Check 'Cài đặt: link không https -> 422' ($r -like '422|*') $r
 $code = (Post-Form '/admin/settings' $jarE @("_csrf=$(Csrf (Get-Page '/admin' $jarE))", 'site_name=Hack'))
 Check 'Editor POST cài đặt -> 403' ($code -like '403|*') $code
 
+Write-Output '== Ảnh chân dung đầu trang chủ (hero_media_id) =='
+$heroBase = @('site_name=Thanh Thanh', 'site_tagline=Biên kịch', 'mission=Đưa lát cắt đời sống người ngồi xe lăn vào điện ảnh.', 'author_name=Thanh Thanh')
+function Hero-Frame() { [regex]::Match(((curl.exe -s "$B/") -join "`n"), '(?s)<div class="portrait__frame">(.*?)</div>').Groups[1].Value }
+$se = Get-Page '/admin/settings' $jarA
+Check 'Cài đặt có ô chọn ảnh chân dung (khung 4:5) + hộp chọn ảnh' ($se -match 'name="hero_media_id"' -and $se -match 'data-cover-img' -and $se -match 'id="media-picker"') ''
+Check 'Trang chủ chưa chọn ảnh -> còn hình minh họa của theme' ((Hero-Frame) -match '<svg') ''
+$r = Post-Form '/admin/settings' $jarA ($heroBase + @("_csrf=$(Csrf $se)", 'hero_media_id=999999'))
+Check 'hero_media_id không tồn tại -> 422' ($r -like '422|*') $r
+$r = Post-Form '/admin/settings' $jarA ($heroBase + @("_csrf=$(Csrf $se)", 'hero_media_id=abc'))
+Check 'hero_media_id không phải số -> 422' ($r -like '422|*') $r
+curl.exe -s -o NUL -b $jarA -c $jarA -F "_csrf=$(Csrf (Get-Page '/admin/media' $jarA))" -F 'alt=Anh chan dung thu' -F "files[]=@$S\anh-thu.jpg;type=image/jpeg" "$B/admin/media/upload" | Out-Null
+$heroId = Sql "SELECT id FROM media ORDER BY id DESC LIMIT 1"
+Post-Form "/admin/media/$heroId" $jarA @("_csrf=$(Csrf (Get-Page '/admin/media' $jarA))", 'alt=Anh chan dung thu', 'focus_x=80', 'focus_y=50') | Out-Null
+$r = Post-Form '/admin/settings' $jarA ($heroBase + @("_csrf=$(Csrf (Get-Page '/admin/settings' $jarA))", "hero_media_id=$heroId"))
+Check 'Gắn ảnh chân dung -> 303, lưu id' ($r -like '303|*' -and (Sql "SELECT value FROM settings WHERE ``key``='hero_media_id'") -eq $heroId) $r
+$hf = Hero-Frame
+Check 'Trang chủ: ảnh thật thay hình minh họa (img, không còn svg)' ($hf -match '<img' -and $hf -notmatch '<svg') ''
+Check 'Ảnh chân dung: ưu tiên tải (LCP) + srcset + width/height + alt' ($hf -match 'fetchpriority="high"' -and $hf -match 'srcset="[^"]+-480\.webp 480w' -and $hf -match 'width="1440" height="864"' -and $hf -match 'alt="Anh chan dung thu"') ''
+# Ảnh 1440x864 (5:3) vào khung 4:5: cắt ngang quanh điểm tâm x=80% -> object-position tính từ công thức cropRect (W=1440,H=864,cw=691): (0.8*1440-345.6)/(1440-691.2)=1.0773 -> kẹp 100%
+Check 'Khung 4:5 cắt theo điểm tâm ngang (80% -> object-position 100% 50%)' ($hf -match 'object-position:100% 50%') ($hf)
+Check 'Chỉ 1 ảnh fetchpriority=high trên trang chủ (không tranh LCP)' (([regex]::Matches(((curl.exe -s "$B/") -join "`n"), 'fetchpriority="high"')).Count -eq 1) ''
+Check 'Thư viện ảnh có khung xem trước "Chân dung" 4:5' ((Get-Page '/admin/media' $jarA) -match 'Chân dung') ''
+$r = Post-Form "/admin/media/$heroId/delete" $jarA @("_csrf=$(Csrf (Get-Page '/admin/media' $jarA))")
+$flash = Get-Page '/admin/media' $jarA
+Check 'Không xóa được ảnh đang làm ảnh chân dung (nêu rõ lý do)' ((Sql "SELECT COUNT(*) FROM media WHERE id=$heroId") -eq '1' -and $flash -match 'Ảnh chân dung đầu trang chủ') $r
+$r = Post-Form '/admin/settings' $jarA ($heroBase + @("_csrf=$(Csrf (Get-Page '/admin/settings' $jarA))", 'hero_media_id='))
+Check 'Bỏ ảnh chân dung -> trang chủ quay về hình minh họa' ($r -like '303|*' -and (Hero-Frame) -match '<svg' -and (Hero-Frame) -notmatch '<img') $r
+Post-Form "/admin/media/$heroId/delete" $jarA @("_csrf=$(Csrf (Get-Page '/admin/media' $jarA))") | Out-Null
+Check 'Hết dùng -> xóa được ảnh' ((Sql "SELECT COUNT(*) FROM media WHERE id=$heroId") -eq '0') ''
+
 Write-Output '== Thùng rác, audit, đăng xuất =='
 $r = Post-Form "/admin/posts/$postId/trash" $jarA @("_csrf=$t")
 $code = curl.exe -s -o NUL -w '%{http_code}' "$B/goc-nghe/bai-thu-nghiem-doi-slug"

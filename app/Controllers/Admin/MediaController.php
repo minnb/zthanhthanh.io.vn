@@ -112,7 +112,10 @@ final class MediaController extends AdminController
     }
 
     /** Khung hiển thị của site, xem trước trong Thư viện ảnh (nhãn => tỉ lệ rộng/cao). */
-    private const PREVIEW_FRAMES = ['Ảnh bìa' => Image::FRAME_COVER, 'Poster' => Image::FRAME_POSTER, 'Facebook' => Image::FRAME_SHARE];
+    private const PREVIEW_FRAMES = [
+        'Ảnh bìa' => Image::FRAME_COVER, 'Poster' => Image::FRAME_POSTER,
+        'Chân dung' => Image::FRAME_PORTRAIT, 'Facebook' => Image::FRAME_SHARE,
+    ];
 
     /**
      * Chuẩn bị dữ liệu thẻ ảnh cho view Thư viện (template chỉ còn if/foreach – theme-ui.md):

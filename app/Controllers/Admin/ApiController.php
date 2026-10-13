@@ -110,6 +110,11 @@ final class ApiController extends AdminController
             [$data, $errors, $form] = PostSaver::validate(PostSaver::newPostStub());
             $this->checkApproval($data, $source);
             if ($errors !== []) {
+                // Yêu cầu song song cùng bài gốc: yêu cầu kia có thể vừa đăng xong GIỮA bước kiểm source_ref ở trên và bước kiểm
+                // đường dẫn (cùng tiêu đề -> cùng slug) -> lỗi "trùng đường dẫn" thực chất là "bài này đã đăng": kiểm lại.
+                if ($ref !== '' && ($existing = AdminPost::findBySourceRef($ref)) !== null) {
+                    throw self::duplicate($existing);
+                }
                 throw new ApiException(422, 'Dữ liệu chưa hợp lệ.', ['errors' => $errors]);
             }
 
