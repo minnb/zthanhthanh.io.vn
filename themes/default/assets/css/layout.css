@@ -21,7 +21,9 @@
 /* ---------- Header ---------- */
 .site-header { border-bottom: 1px solid var(--line); background: var(--paper); }
 .site-header__bar { display: flex; align-items: center; justify-content: space-between; min-height: var(--header-h); gap: 16px; }
-.brand { display: flex; align-items: baseline; gap: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand__icon { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(43,33,28,.14); transition: transform .2s ease; }
+.brand:hover .brand__icon { transform: scale(1.05); }
 .brand__name { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
 .brand__tag { display: none; font-size: var(--fs-xs); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 @media (min-width: 640px) { .brand__tag { display: inline; } }

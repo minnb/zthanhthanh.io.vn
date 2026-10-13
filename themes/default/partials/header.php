@@ -10,6 +10,7 @@ $menu = $site['menu'] ?? [];
 <header class="site-header">
   <div class="container site-header__bar">
     <a class="brand" href="<?= e(url('/')) ?>"<?= $currentPath === '/' ? ' aria-current="page"' : '' ?>>
+      <img class="brand__icon" src="<?= e(url('/favicon.svg')) ?>" alt="" width="32" height="32" aria-hidden="true">
       <span class="brand__name"><?= e($site['name'] ?? '') ?></span>
       <?php if (!empty($site['tagline'])): ?><span class="brand__tag"><?= e($site['tagline']) ?></span><?php endif; ?>
     </a>
@@ -38,7 +39,10 @@ $menu = $site['menu'] ?? [];
 
   <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
     <div class="container mobile-menu__bar">
-      <span class="brand__name"><?= e($site['name'] ?? '') ?></span>
+      <a class="brand" href="<?= e(url('/')) ?>">
+        <img class="brand__icon" src="<?= e(url('/favicon.svg')) ?>" alt="" width="28" height="28" aria-hidden="true">
+        <span class="brand__name"><?= e($site['name'] ?? '') ?></span>
+      </a>
       <button class="icon-btn" type="button" data-menu-close aria-label="Đóng menu">
         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16"/></svg>
       </button>
