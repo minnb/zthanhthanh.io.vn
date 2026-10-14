@@ -14,7 +14,6 @@
   <div class="prose article__body"><?= $page['html'] ?></div>
   <?php if ($page['slug'] === 'gioi-thieu'): ?>
     <div class="article__foot">
-      <?= partial('partials/collab-box') ?>
       <?= partial('partials/author-box') ?>
     </div>
   <?php endif; ?>
