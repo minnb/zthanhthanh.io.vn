@@ -30,6 +30,7 @@ final class HomeController
             'description' => (string) Setting::get('mission_intro', ''),
             'blocks' => is_array($blocks) ? $blocks : [],
             'featuredFilm' => $film,
+            'allFilms' => Film::all(),
             'milestones' => $film !== null ? Film::milestones((int) $film['id']) : [],
             'achievements' => (array) Setting::json('achievements', []),
             'latestPosts' => Post::latest(3),

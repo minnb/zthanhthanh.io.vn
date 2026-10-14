@@ -17,12 +17,14 @@ final class Site
             'missionIntro' => Setting::get('mission_intro', ''),
             'authorName' => Setting::get('author_name', ''),
             'authorBio' => Setting::get('author_bio', ''),
-            'contactEmail' => Setting::get('contact_email', ''),
+            'contactEmail' => Setting::get('contact_email', 'doicho147@gmail.com'),
+            'contactAddress' => Setting::get('contact_address', 'Thôn Vân Sa, xã Cổ Đô, Hà Nội'),
             'ogImage' => Setting::get('default_og_image', ''),
             'authorAvatar' => Setting::get('author_avatar', ''),
             'social' => array_filter([
-                'Facebook' => Setting::get('social_facebook', ''),
+                'Facebook' => Setting::get('social_facebook', 'https://www.facebook.com/thanhthanh.KOII'),
                 'Threads' => Setting::get('social_threads', ''),
+                'TikTok' => Setting::get('social_tiktok', ''),
             ]),
             'menu' => is_array($menu) ? $menu : [],
         ];
@@ -37,7 +39,10 @@ final class Site
     {
         return [
             'name' => 'Thanh Thanh', 'tagline' => 'Biên kịch', 'mission' => '', 'missionIntro' => '',
-            'authorName' => 'Thanh Thanh', 'authorBio' => '', 'contactEmail' => '', 'ogImage' => '', 'authorAvatar' => '', 'social' => [], 'menu' => [],
+            'authorName' => 'Thanh Thanh', 'authorBio' => '', 'contactEmail' => 'doicho147@gmail.com',
+            'contactAddress' => 'Thôn Vân Sa, xã Cổ Đô, Hà Nội',
+            'ogImage' => '', 'authorAvatar' => '', 'social' => [], 'menu' => [],
         ];
+
     }
 }

@@ -15,16 +15,22 @@ $missionHtml = str_contains($mission, $highlight)
 ?>
 <section class="container hero">
   <div>
-    <p class="eyebrow">Biên kịch · Diễn viên · Người kể chuyện</p>
+    <p class="eyebrow">BIÊN KỊCH · SCREENWRITER · FINALIST INSPIRING ASIA 2026</p>
     <h1 class="h-display mt-5"><?= $missionHtml ?></h1>
     <?php if (!empty($site['missionIntro'])): ?>
       <p class="lead hero__lead"><?= e($site['missionIntro']) ?></p>
     <?php endif; ?>
     <div class="btn-row">
       <?php if ($featuredFilm): ?>
-        <a class="btn btn--primary" href="<?= e(url('/phim/' . $featuredFilm['slug'])) ?>">Xem phim <?= e($featuredFilm['title']) ?></a>
+        <a class="btn btn--primary" href="#featured-works">
+          <span>Khám phá kịch bản & Phim</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </a>
       <?php endif; ?>
-      <a class="btn btn--outline" href="<?= e(url('/hau-truong-bien-kich')) ?>">Đọc hậu trường →</a>
+      <a class="btn btn--outline" href="<?= e(url('/lien-he')) ?>">
+        <span>Gặp gỡ biên kịch / Pitching</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
   <figure class="portrait">
@@ -36,8 +42,10 @@ $missionHtml = str_contains($mission, $highlight)
         <?= partial('partials/art-portrait') ?>
       <?php endif; ?>
     </div>
-    <?php if ($featuredFilm && !empty($featuredFilm['badge'])): ?>
-      <figcaption class="portrait__note"><span>Mới nhất</span><?= e($featuredFilm['title'] . ' vào ' . $featuredFilm['badge']) ?></figcaption>
-    <?php endif; ?>
+    <figcaption class="portrait__note">
+      <span>Thành tựu điện ảnh</span>
+      <strong>Chung kết Inspiring Asia 2026 · Manila</strong>
+      <small class="portrait__note-sub">Phim ngắn ĐỢI · Biên kịch & Vai chính</small>
+    </figcaption>
   </figure>
 </section>

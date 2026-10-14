@@ -13,6 +13,13 @@
   </header>
   <div class="prose article__body"><?= $page['html'] ?></div>
   <?php if ($page['slug'] === 'gioi-thieu'): ?>
-    <div class="article__foot"><?= partial('partials/author-box') ?></div>
+    <div class="article__foot">
+      <?= partial('partials/collab-box') ?>
+      <?= partial('partials/author-box') ?>
+    </div>
+  <?php elseif ($page['slug'] === 'lien-he'): ?>
+    <div class="article__foot">
+      <?= partial('partials/collab-box') ?>
+    </div>
   <?php endif; ?>
 </article>
