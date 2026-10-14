@@ -1,7 +1,7 @@
 <?php
 /**
- * Partial: Góc Bàn Đọc (The Writer's Bookshelf / Book Card)
- * Hiển thị ở cuối bài viết để kết nối sách nuôi dưỡng trang viết & link Affiliate tinh tế.
+ * Lời thủ thỉ từ trang sách (The Writer's Reading Corner)
+ * Thiết kế tối giản, tinh tế như một ghi chép bên lề của tác giả Thanh Thanh.
  *
  * @var list<array<string, mixed>> $books
  */
@@ -9,57 +9,54 @@ if (empty($books)) {
     return;
 }
 ?>
-<section class="book-card-section" aria-label="Góc bàn đọc của Thanh Thanh">
-  <div class="book-card-section__header">
-    <span class="book-card-section__badge" aria-hidden="true">📖 Góc bàn đọc</span>
-    <h3 class="book-card-section__title">Sách nuôi dưỡng trang viết này</h3>
-    <p class="book-card-section__subtitle">Những cuốn sách đã tiếp thêm chất liệu, cảm hứng và vốn sống cho bài viết của Thanh Thanh.</p>
+<aside class="author-reading-whisper" aria-label="Góc đọc của Thanh Thanh">
+  <div class="reading-whisper__header">
+    <span class="reading-whisper__badge">Bên lề trang viết</span>
+    <p class="reading-whisper__lead">Cuốn sách đã đồng hành và tiếp thêm chất liệu cho bài viết này của mình:</p>
   </div>
 
-  <div class="book-card-grid">
+  <div class="reading-whisper__list">
     <?php foreach ($books as $book): ?>
-      <div class="book-card">
-        <div class="book-card__visual">
+      <div class="reading-whisper__item">
+        <div class="reading-whisper__book">
           <?php if (!empty($book['cover'])): ?>
-            <div class="book-card__cover-wrap">
+            <div class="reading-whisper__cover">
               <?= partial('partials/image', [
                   'media' => $book['cover'],
                   'ratio' => '3/4',
                   'eager' => false,
-                  'sizes' => '(min-width: 640px) 160px, 120px'
+                  'sizes' => '88px'
               ]) ?>
-              <div class="book-card__spine" aria-hidden="true"></div>
             </div>
           <?php else: ?>
-            <div class="book-card__spine-mockup" aria-hidden="true">
-              <span class="book-card__mockup-title"><?= e($book['title']) ?></span>
-              <span class="book-card__mockup-author"><?= e($book['author']) ?></span>
+            <div class="reading-whisper__spine" aria-hidden="true">
+              <span class="reading-whisper__spine-title"><?= e($book['title']) ?></span>
             </div>
           <?php endif; ?>
-        </div>
 
-        <div class="book-card__content">
-          <h4 class="book-card__name"><?= e($book['title']) ?></h4>
-          <p class="book-card__author">Tác giả: <strong><?= e($book['author']) ?></strong></p>
+          <div class="reading-whisper__meta">
+            <h4 class="reading-whisper__title"><?= e($book['title']) ?></h4>
+            <p class="reading-whisper__author"><?= e($book['author']) ?></p>
 
-          <?php if (!empty($book['note'])): ?>
-            <blockquote class="book-card__note">
-              <p>“<?= e($book['note']) ?>”</p>
-              <cite>— Lời bình từ Thanh Thanh</cite>
-            </blockquote>
-          <?php endif; ?>
-
-          <?php if (!empty($book['affiliate_url'])): ?>
-            <div class="book-card__action">
-              <a href="<?= e($book['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="btn btn--sm btn--book">
-                <span>Tìm đọc tác phẩm này</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <?php if (!empty($book['affiliate_url'])): ?>
+              <a href="<?= e($book['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="reading-whisper__link">
+                <span>Tìm đọc cuốn sách này</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
               </a>
-              <span class="book-card__disclaimer">☕ Khi mua sách qua liên kết này, bạn đang gửi một tách trà ấm tiếp sức cho những trang kịch bản tiếp theo của Thanh Thanh.</span>
-            </div>
-          <?php endif; ?>
+            <?php endif; ?>
+          </div>
         </div>
+
+        <?php if (!empty($book['note'])): ?>
+          <blockquote class="reading-whisper__note">
+            <p>“<?= e($book['note']) ?>”</p>
+          </blockquote>
+        <?php endif; ?>
       </div>
     <?php endforeach; ?>
   </div>
-</section>
+
+  <p class="reading-whisper__footer">
+    ☕ Nếu bạn mua sách qua liên kết giới thiệu này, đó cũng là một tách trà ấm tiếp sức cho những trang viết tiếp theo của mình. Cảm ơn bạn thật nhiều!
+  </p>
+</aside>

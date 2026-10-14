@@ -14,17 +14,17 @@ $contactEmail = (string) ($site['contactEmail'] ?? 'doicho147@gmail.com');
       <p class="eyebrow">TRÍCH ĐOẠN KỊCH BẢN · SCREENPLAY EXCERPT</p>
       <h2 class="h-2 mt-2" id="script-heading">Không gian đọc kịch bản: "ĐỢI"</h2>
     </div>
-    <span class="badge badge--script">Chuẩn Hollywood Format</span>
+    <span class="badge badge--script">Định dạng Kịch bản Phim</span>
   </div>
 
   <p class="lead section__intro">
-    Một trích đoạn tiêu biểu từ Cảnh 1 phim ngắn <em>ĐỢI</em> – tác phẩm lọt vào Chung kết <strong>Inspiring Asia 2026</strong> tại Manila.
+    Trích đoạn Cảnh 1 phim ngắn <em>ĐỢI</em> – tác phẩm lọt vào Chung kết <strong>Inspiring Asia 2026</strong> tại Manila.
   </p>
 
   <div class="script-reader">
     <div class="script-reader__header">
       <div class="script-reader__meta">
-        <span class="script-tag">DRAFT 3 · FINAL COMPETITION CUT</span>
+        <span class="script-tag">DRAFT 3 · COMPETITION CUT</span>
         <span class="script-title">KỊCH BẢN PHIM NGẮN: ĐỢI (WAITING)</span>
       </div>
       <div class="script-reader__author">Tác giả: <strong>Thanh Thanh</strong></div>
@@ -81,18 +81,18 @@ $contactEmail = (string) ($site['contactEmail'] ?? 'doicho147@gmail.com');
     <!-- Hộp kêu gọi hợp tác dành cho Đạo diễn & Nhà sản xuất -->
     <div class="script-collab-cta">
       <div class="script-collab-cta__text">
-        <h3 class="script-collab-cta__title">Bạn quan tâm đến kịch bản đầy đủ hoặc muốn hợp tác sản xuất?</h3>
+        <h3 class="script-collab-cta__title">Thảo luận về kịch bản đầy đủ hoặc cơ hội hợp tác</h3>
         <p class="script-collab-cta__desc">
-          Biên kịch Thanh Thanh sẵn sàng chia sẻ toàn bộ Full Script, Treatment chi tiết và Pitch Deck dự án cho các đạo diễn, nhà sản xuất và liên hoan phim.
+          Mình luôn sẵn lòng gửi trọn bộ Full Script, Treatment chi tiết và Pitch Deck dự án cho các đạo diễn, nhà sản xuất và liên hoan phim quan tâm.
         </p>
       </div>
       <div class="script-collab-cta__actions">
         <a class="btn btn--primary" href="mailto:<?= e($contactEmail) ?>?subject=<?= rawurlencode('[Screenplay Request] Yêu cầu kịch bản hoàn chỉnh: ĐỢI') ?>">
-          <span>Yêu cầu Full Script qua Email</span>
+          <span>Nhận Full Script qua Email</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         </a>
         <a class="btn btn--outline" href="<?= e(url('/lien-he')) ?>">
-          <span>Thảo luận dự án mới →</span>
+          <span>Trò chuyện & Kết nối →</span>
         </a>
       </div>
     </div>

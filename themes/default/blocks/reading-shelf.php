@@ -13,7 +13,7 @@ if (empty($featuredBooks)) {
     <div class="section-head text-center">
       <p class="eyebrow">Tủ Sách & Vốn Sống</p>
       <h2 class="h-2" id="reading-shelf-title">Sách gối đầu giường của Biên kịch</h2>
-      <p class="section-head__lead">Những cuốn sách đã nuôi dưỡng tư duy kể chuyện điện ảnh, tiếp thêm chất liệu sống và đồng hành cùng Thanh Thanh qua những tháng năm nghịch cảnh.</p>
+      <p class="section-head__lead">Những cuốn sách đã tiếp thêm chất liệu, nuôi dưỡng cảm xúc và đồng hành cùng mình qua những tháng năm nghịch cảnh.</p>
     </div>
 
     <div class="shelf-grid mt-6">
@@ -69,7 +69,7 @@ if (empty($featuredBooks)) {
     </div>
 
     <div class="shelf-note text-center mt-6">
-      <p class="small muted">☕ Khi mua sách qua liên kết giới thiệu, bạn đang gửi một tách trà ấm tiếp sức cho những trang kịch bản tiếp theo của Thanh Thanh.</p>
+      <p class="small muted">☕ Nếu bạn chọn mua sách qua các liên kết này, bạn đang gửi một tách trà ấm tiếp sức cho những trang viết tiếp theo của mình. Cảm ơn bạn thật nhiều!</p>
     </div>
   </div>
 </section>

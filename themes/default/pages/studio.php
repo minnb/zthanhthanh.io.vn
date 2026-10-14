@@ -13,7 +13,7 @@
     <p class="eyebrow mt-2">KHÔNG GIAN SÁNG TÁC · WRITER'S STUDIO</p>
     <h1 class="h-1 mt-1">Kịch bản "ĐỢI" &amp; Tủ sách gối đầu giường</h1>
     <p class="lead mt-3" style="max-width: 48rem;">
-      Không gian sáng tác độc bản của biên kịch Thanh Thanh: Nơi lưu giữ trích đoạn kịch bản phim ngắn <em>ĐỢI</em> (Top 7 Inspiring Asia 2026 tại Manila) và 10 cuốn sách nuôi dưỡng tư duy kể chuyện điện ảnh.
+      Góc nhỏ lưu giữ trích đoạn kịch bản phim ngắn <em>ĐỢI</em> (Top 7 Inspiring Asia 2026 tại Manila) và 10 cuốn sách đã đồng hành cùng Thanh Thanh trong hành trình tự học viết kịch bản.
     </p>
 
     <!-- Thanh chuyển nhanh giữa 2 phần -->
