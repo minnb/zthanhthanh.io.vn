@@ -4,8 +4,8 @@
 :root {
   --paper: #F7F1E8;
   --card: #FFFBF5;
-  --ink: #2B211C;
-  --muted: #6B5A4E;
+  --ink: #302621;
+  --muted: #6E5E53;
   --line: #E4D9C8;
   --accent: #8E1F2F;
   --on-accent: #FFFFFF;
@@ -24,7 +24,7 @@
   --art-red: #8E1F2F;
   --art-light: #EDE4D8;
   --art-gold: #C9A66B;
-  --art-ink: #2B211C;
+  --art-ink: #302621;
   --art-paper: #F7F1E8;
 
   /* Trạng thái (trang dev, admin) */
@@ -40,11 +40,14 @@
   --fb-title: #050505;
   --fb-host: #65676B;
 
-  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Lora", "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body: "Be Vietnam Pro", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font: var(--font-body);
   --fs-body: 1.0625rem;      /* 17px */
   --fs-small: 0.9375rem;     /* 15px */
   --fs-xs: 0.8125rem;        /* 13px */
   --lh-body: 1.75;
+  --lh-heading: 1.28;
 
   --container: 72rem;
   --prose: 40rem;

@@ -31,6 +31,7 @@ $pageTitle = Seo::title($title ?? null, (string) ($site['name'] ?? 'Thanh Thanh'
 <link rel="manifest" href="<?= e(url('/site.webmanifest')) ?>">
 <script>try{var t=localStorage.getItem('tt-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="preload" href="<?= e(asset('fonts/be-vietnam-pro-400-vietnamese.woff2')) ?>" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="<?= e(asset('fonts/lora-normal-vietnamese.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="<?= e(asset('fonts/be-vietnam-pro-400-latin.woff2')) ?>" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= e(asset('app.css')) ?>">
 <script src="<?= e(asset('app.js')) ?>" defer></script>

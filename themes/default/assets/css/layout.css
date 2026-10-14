@@ -24,13 +24,13 @@
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand__icon { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(43,33,28,.14); transition: transform .2s ease; }
 .brand:hover .brand__icon { transform: scale(1.05); }
-.brand__name { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
+.brand__name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; }
 .brand__tag { display: none; font-size: var(--fs-xs); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 @media (min-width: 640px) { .brand__tag { display: inline; } }
 
 .site-nav { display: none; }
-.site-nav__list { display: flex; align-items: center; gap: 28px; font-size: var(--fs-small); font-weight: 600; }
-.site-nav__list a[aria-current="page"] { color: var(--accent); }
+.site-nav__list { display: flex; align-items: center; gap: 28px; font-size: var(--fs-small); font-weight: 500; }
+.site-nav__list a[aria-current="page"] { color: var(--accent); font-weight: 600; }
 .site-nav__cta { border: 1px solid var(--ink); border-radius: 999px; padding: 8px 16px; }
 .site-nav__cta:hover { border-color: var(--accent); }
 
