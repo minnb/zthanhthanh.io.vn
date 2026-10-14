@@ -29,6 +29,9 @@ return static function (Router $router): void {
 
     $router->get('/gioi-thieu', [PageController::class, 'about']);
     $router->get('/lien-he', [PageController::class, 'contact']);
+    $router->get('/goc-sang-tac', [PageController::class, 'studio']);
+    $router->get('/kich-ban', [PageController::class, 'studio']);
+    $router->get('/tu-sach', [PageController::class, 'studio']);
     $router->get('/en/press-kit', [PageController::class, 'pressKit']);
 
     // ---------------- Admin (mọi action tự kiểm quyền + CSRF trong AdminController::guard) ----------------

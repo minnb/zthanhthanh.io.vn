@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\Core\HttpException;
 use App\Core\Markdown;
 use App\Core\View;
+use App\Models\Book;
 use App\Models\Film;
 use App\Models\Page;
 
@@ -20,6 +21,21 @@ final class PageController
     public function contact(): string
     {
         return $this->render('lien-he', 'vi');
+    }
+
+    /** Không gian sáng tác: Kịch bản ĐỢI và Tủ sách gối đầu giường của Biên kịch. */
+    public function studio(): string
+    {
+        return View::render('pages/studio', [
+            'title' => 'Không gian sáng tác: Kịch bản ĐỢI & Tủ sách',
+            'description' => 'Trích đoạn kịch bản phim ngắn ĐỢI (Top 7 Inspiring Asia 2026 tại Manila) và 10 cuốn sách nuôi dưỡng tư duy kể chuyện điện ảnh của biên kịch Thanh Thanh.',
+            'canonicalPath' => '/goc-sang-tac',
+            'featuredBooks' => Book::allVisible(),
+            'breadcrumb' => [
+                ['label' => 'Trang chủ', 'url' => '/'],
+                ['label' => 'Không gian sáng tác'],
+            ],
+        ]);
     }
 
     /** Press kit tiếng Anh cho ban tổ chức liên hoan phim, báo chí. */

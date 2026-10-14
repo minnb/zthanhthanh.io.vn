@@ -55,7 +55,7 @@ if (!empty($allFilms)) {
         </dl>
         <div class="film-feature__actions">
           <a class="btn btn--primary btn--sm" href="<?= e($filmUrl) ?>">Xem chi tiết phim & Hậu trường →</a>
-          <a class="btn btn--outline btn--sm" href="#script-excerpt">Đọc trích đoạn kịch bản ↓</a>
+          <a class="btn btn--outline btn--sm" href="<?= e(url('/goc-sang-tac')) ?>">Đọc trích đoạn kịch bản →</a>
         </div>
       </div>
     </article>

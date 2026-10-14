@@ -468,3 +468,26 @@
 .btn--book-shelf { min-height: 34px; padding: 0 14px; font-size: var(--fs-xs); background: var(--ink); color: var(--paper); }
 .btn--book-shelf:hover { background: var(--accent); color: #fff; }
 
+/* ---------- Trang riêng: Không gian sáng tác ---------- */
+.studio-page { padding-bottom: var(--space-8); }
+.studio-nav-tabs {
+  display: inline-flex; flex-wrap: wrap; gap: 8px;
+  padding: 6px; background: var(--card); border: 1px solid var(--line);
+  border-radius: 999px; box-shadow: var(--shadow-sm);
+}
+.studio-tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 999px; font-size: var(--fs-small);
+  font-weight: 600; color: var(--ink); text-decoration: none;
+  background: var(--paper); border: 1px solid transparent;
+  transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.studio-tab svg { color: var(--brass); }
+.studio-tab:hover {
+  background: var(--accent); color: var(--on-accent);
+  box-shadow: 0 4px 12px rgba(184, 51, 42, 0.2);
+  transform: translateY(-1px);
+}
+.studio-tab:hover svg { color: #FFFFFF; }
+.studio-section { scroll-margin-top: 96px; }
+

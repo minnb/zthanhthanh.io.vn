@@ -359,7 +359,7 @@ CREATE TABLE `settings` (
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_settings_key` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -378,8 +378,8 @@ INSERT INTO `settings` VALUES (7,'social_facebook','https://www.facebook.com/tha
 INSERT INTO `settings` VALUES (8,'social_threads','https://www.threads.net/@thanhthanh.koii','2026-10-13 20:02:51','2026-10-14 07:41:45');
 INSERT INTO `settings` VALUES (9,'contact_email','doicho147@gmail.com','2026-10-13 20:02:51','2026-10-14 07:41:45');
 INSERT INTO `settings` VALUES (10,'default_og_image','','2026-10-13 20:02:51','2026-10-13 20:02:51');
-INSERT INTO `settings` VALUES (11,'menu_main','[{\"label\":\"Hậu trường biên kịch\",\"url\":\"/hau-truong-bien-kich\"},{\"label\":\"Góc nghề\",\"url\":\"/goc-nghe\"},{\"label\":\"Phim\",\"url\":\"/phim\"},{\"label\":\"Giới thiệu\",\"url\":\"/gioi-thieu\"},{\"label\":\"EN · Press kit\",\"url\":\"/en/press-kit\",\"style\":\"button\"}]','2026-10-13 20:02:51','2026-10-13 20:02:51');
-INSERT INTO `settings` VALUES (12,'home_blocks','[\"hero-mission\",\"achievements\",\"featured-film\",\"script-preview\",\"reading-shelf\",\"latest-posts\",\"milestones\"]','2026-10-13 20:02:51','2026-10-14 09:13:52');
+INSERT INTO `settings` VALUES (11,'menu_main','[{\"label\":\"Phim\",\"url\":\"\\/phim\"},{\"label\":\"Góc sáng tác\",\"url\":\"\\/goc-sang-tac\"},{\"label\":\"Hậu trường biên kịch\",\"url\":\"\\/hau-truong-bien-kich\"},{\"label\":\"Góc nghề\",\"url\":\"\\/goc-nghe\"},{\"label\":\"Giới thiệu\",\"url\":\"\\/gioi-thieu\"},{\"label\":\"EN · Press kit\",\"url\":\"\\/en\\/press-kit\",\"style\":\"button\"}]','2026-10-13 20:02:51','2026-10-14 09:32:27');
+INSERT INTO `settings` VALUES (12,'home_blocks','[\"hero-mission\",\"achievements\",\"featured-film\",\"latest-posts\",\"milestones\"]','2026-10-13 20:02:51','2026-10-14 09:28:57');
 INSERT INTO `settings` VALUES (13,'achievements','[{\"value\":\"Chung kết\",\"label\":\"Inspiring Asia 2026 · Manila\"},{\"value\":\"Chung kết\",\"label\":\"Inspiring Vietnam 2026 · SIHUB\"},{\"value\":\"Top 7\",\"label\":\"From Script to Screen mùa 1\"}]','2026-10-13 20:02:51','2026-10-13 20:02:51');
 INSERT INTO `settings` VALUES (24,'hero_media_id','8','2026-10-13 22:27:31','2026-10-13 22:27:31');
 INSERT INTO `settings` VALUES (26,'contact_address','Thôn Vân Sa, xã Cổ Đô, Hà Nội','2026-10-14 07:41:45','2026-10-14 07:41:45');
@@ -486,4 +486,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-14  9:15:52
+-- Dump completed on 2026-10-14  9:34:54

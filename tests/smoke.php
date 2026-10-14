@@ -19,6 +19,7 @@ return [
     ['/phim/dua-con-den-tu-coi-am', 200],
     ['/gioi-thieu', 200],
     ['/lien-he', 200],
+    ['/goc-sang-tac', 200],
     ['/en/press-kit', 200],
 
     // SEO kỹ thuật

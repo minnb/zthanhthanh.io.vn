@@ -17,7 +17,10 @@ if (empty($featuredBooks)) {
     </div>
 
     <div class="shelf-grid mt-6">
-      <?php foreach (array_slice($featuredBooks, 0, 6) as $book): ?>
+      <?php
+      $displayBooks = isset($shelfLimit) ? array_slice($featuredBooks, 0, (int) $shelfLimit) : $featuredBooks;
+      foreach ($displayBooks as $book):
+      ?>
         <article class="shelf-item">
           <div class="shelf-item__cover">
             <?php if (!empty($book['cover'])): ?>
