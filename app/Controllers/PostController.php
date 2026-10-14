@@ -7,6 +7,7 @@ use App\Core\HttpException;
 use App\Core\Markdown;
 use App\Core\Seo;
 use App\Core\View;
+use App\Models\Book;
 use App\Models\Category;
 use App\Models\Media;
 use App\Models\Post;
@@ -62,6 +63,7 @@ final class PostController
             'jsonLd' => [Seo::blogPostingSchema($post, Site::info(), $description)],
             'post' => $post,
             'related' => Post::related($post, 3),
+            'books' => Book::forPost((int) $post['id']),
             'breadcrumb' => [
                 ['label' => 'Trang chủ', 'url' => '/'],
                 ['label' => (string) $post['category_name'], 'url' => '/' . $post['category_slug']],

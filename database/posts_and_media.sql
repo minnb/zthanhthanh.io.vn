@@ -211,6 +211,52 @@ INSERT INTO `film_milestones` VALUES (8,1,'10/2026','Chung kết Manila','Inspir
 UNLOCK TABLES;
 
 --
+-- Table structure for table `books`
+--
+
+DROP TABLE IF EXISTS `books`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `books` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `author` varchar(160) NOT NULL,
+  `cover_media_id` int(10) unsigned DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `affiliate_url` varchar(500) DEFAULT NULL,
+  `post_id` int(10) unsigned DEFAULT NULL,
+  `is_visible` tinyint(1) NOT NULL DEFAULT 1,
+  `sort_order` smallint(6) NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `fk_books_cover` (`cover_media_id`),
+  KEY `fk_books_post` (`post_id`),
+  CONSTRAINT `fk_books_cover` FOREIGN KEY (`cover_media_id`) REFERENCES `media` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_books_post` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `books`
+--
+
+LOCK TABLES `books` WRITE;
+/*!40000 ALTER TABLE `books` DISABLE KEYS */;
+INSERT INTO `books` VALUES (1,'Tuổi Thơ Dữ Dội','Phùng Quán',15,'Cuốn sách đã lấy đi của mình nhiều nước mắt nhất thời niên thiếu. Những đứa trẻ Vệ Quốc Đoàn như Lượm, Mừng, Vịnh Sưa dạy cho một biên kịch như mình hiểu rằng: Sự chân thật và lòng quả cảm trong văn chương không cần bất kỳ sự tô vẽ hoa mỹ nào để trường tồn.','https://tiki.vn/search?q=tuoi+tho+du+doi+phung+quan',13,1,1,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (2,'Vượt Côn Đảo','Phùng Quán',15,'Sau 20 năm bị cuộc đời \"sàng sảy\" qua những cơn đau co rút khớp xương, đọc lại cuốn sách này mình mới thấu hết sức chịu đựng phi thường của con người trước nghịch cảnh. Đọc để thấy nỗi đau thể xác của mình hôm nay vẫn còn bé nhỏ lắm.','https://tiki.vn/search?q=vuot+con+dao+phung+quan',13,1,2,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (3,'Một Lít Nước Mắt','Kito Aya',7,'Người bạn tâm giao đã cứu rỗi linh hồn mình trong những năm tháng tăm tối nhất của tuổi 15. Mỗi lần nhìn Aya gượng gạo ghi từng dòng nhật ký khi cơ thể dần bất động, mình tự nhắc nhở: Mình còn thở, ngón tay còn gõ được phím máy tính, nghĩa là mình chưa được phép đầu hàng số phận.','https://tiki.vn/search?q=mot+lit+nuoc+mat+kito+aya',15,1,3,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (4,'Hiểu Về Trái Tim','Thầy Minh Niệm',5,'Sau những đêm thức trắng cày kịch bản căng não trước màn hình máy tính, đây là cuốn sách đưa mình về lại với sự tĩnh lặng của hiện tại. Muốn viết được những nhân vật biết thứ tha và bao dung, trước hết người cầm bút phải học cách ôm ấp và chữa lành những tổn thương trong chính trái tim mình.','https://tiki.vn/search?q=hieu+ve+trai+tim+minh+niem',16,1,4,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (5,'Story: Substance, Structure, Style and Screenwriting','Robert McKee',6,'Cuốn \"kinh thánh\" mà bất kỳ ai muốn bước vào thánh đường biên kịch đều phải nghiền ngẫm. Robert McKee dạy mình bài học cốt tử: Khán giả không bỏ tiền ra rạp để nghe bạn thuyết giảng luân lý; họ đến để cùng nhân vật trải qua cuộc thử thách sống còn về mặt đạo đức.','https://tiki.vn/search?q=story+robert+mckee',2,1,5,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (6,'Dám Bị Ghét','Kishimi Ichiro & Koga Fumitake',1,'Cuốn sách đã tiếp cho mình lòng can đảm để gật đầu nhận vai chính trong phim ĐỢI dù bị người quen chê sẽ làm bể phim. Lời phán xét của người khác là bài toán của họ, không phải gánh nặng của bạn. Tự do chỉ thực sự bắt đầu khi bạn dám sống đúng với con đường mình đã chọn.','https://tiki.vn/search?q=dam+bi+ghet',1,1,6,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (7,'Save The Cat! Cuốn Sách Cuối Cùng Về Biên Kịch Bạn Cần','Blake Snyder',10,'Cẩm nang thực chiến giúp mình định hình cấu trúc 15 nhịp (Beat Sheet) và cách đúc kết Logline sắc bén cho các buổi pitching. Muốn nhà tài trợ chịu mở hầu bao, kịch bản của bạn phải \"bắt cóc\" được cảm xúc của họ ngay từ 3 trang đầu tiên.','https://tiki.vn/search?q=save+the+cat+blake+snyder',11,1,7,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (8,'Khung Hình Kể Chuyện (Cinematic Storytelling)','Jennifer Van Sijll',4,'Cuốn sách đã mở mắt cho mình: Biên kịch không chỉ viết thoại, mà phải \"viết bằng hình ảnh\". Nhờ những quy tắc về không gian và ánh sáng trong cuốn sách này mà phân cảnh An ngồi xe lăn ngập ngừng trước những bậc tam cấp trong phim ĐỢI mới có được sức nặng ám ảnh người xem.','https://tiki.vn/search?q=cinematic+storytelling',7,1,8,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (9,'Hoàng Tử Bé','Antoine de Saint-Exupéry',15,'Mỗi khi đặt bút viết kịch bản thiếu nhi, mình lại lật mở cuốn sách này để nhắc nhở bản thân: \"Người lớn ai cũng từng là trẻ con, chỉ có điều rất ít người nhớ được điều đó\". Muốn viết cho các em, hãy hạ góc nhìn xuống ngang tầm mắt của một đứa trẻ và nhìn thế giới bằng cả tấm lòng trong veo.','https://tiki.vn/search?q=hoang+tu+be',17,1,9,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+INSERT INTO `books` VALUES (10,'Rebel Without A Crew: Làm Phim 7.000 Đô La','Robert Rodriguez',2,'Cuốn nhật ký làm phim kinh điển đã truyền cho mình sự \"liều lĩnh\" để bấm máy phim ngắn ĐỢI với ngân sách tự túc vỏn vẹn gần 50 triệu. Không có nhiều tiền? Hãy tận dụng chính những gì bạn có trong tầm tay và biến sự thiếu thốn về thiết bị thành cá tính nghệ thuật độc bản.','https://tiki.vn/search?q=rebel+without+a+crew',12,1,10,'2026-10-14 09:12:00','2026-10-14 09:12:00');
+/*!40000 ALTER TABLE `books` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `media`
 --
 
@@ -333,7 +379,7 @@ INSERT INTO `settings` VALUES (8,'social_threads','https://www.threads.net/@than
 INSERT INTO `settings` VALUES (9,'contact_email','doicho147@gmail.com','2026-10-13 20:02:51','2026-10-14 07:41:45');
 INSERT INTO `settings` VALUES (10,'default_og_image','','2026-10-13 20:02:51','2026-10-13 20:02:51');
 INSERT INTO `settings` VALUES (11,'menu_main','[{\"label\":\"Hậu trường biên kịch\",\"url\":\"/hau-truong-bien-kich\"},{\"label\":\"Góc nghề\",\"url\":\"/goc-nghe\"},{\"label\":\"Phim\",\"url\":\"/phim\"},{\"label\":\"Giới thiệu\",\"url\":\"/gioi-thieu\"},{\"label\":\"EN · Press kit\",\"url\":\"/en/press-kit\",\"style\":\"button\"}]','2026-10-13 20:02:51','2026-10-13 20:02:51');
-INSERT INTO `settings` VALUES (12,'home_blocks','[\"hero-mission\",\"achievements\",\"featured-film\",\"script-preview\",\"latest-posts\",\"milestones\"]','2026-10-13 20:02:51','2026-10-14 07:47:59');
+INSERT INTO `settings` VALUES (12,'home_blocks','[\"hero-mission\",\"achievements\",\"featured-film\",\"script-preview\",\"reading-shelf\",\"latest-posts\",\"milestones\"]','2026-10-13 20:02:51','2026-10-14 09:13:52');
 INSERT INTO `settings` VALUES (13,'achievements','[{\"value\":\"Chung kết\",\"label\":\"Inspiring Asia 2026 · Manila\"},{\"value\":\"Chung kết\",\"label\":\"Inspiring Vietnam 2026 · SIHUB\"},{\"value\":\"Top 7\",\"label\":\"From Script to Screen mùa 1\"}]','2026-10-13 20:02:51','2026-10-13 20:02:51');
 INSERT INTO `settings` VALUES (24,'hero_media_id','8','2026-10-13 22:27:31','2026-10-13 22:27:31');
 INSERT INTO `settings` VALUES (26,'contact_address','Thôn Vân Sa, xã Cổ Đô, Hà Nội','2026-10-14 07:41:45','2026-10-14 07:41:45');
@@ -440,4 +486,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-14  9:03:37
+-- Dump completed on 2026-10-14  9:15:52

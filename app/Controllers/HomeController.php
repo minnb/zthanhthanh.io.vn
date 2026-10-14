@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 use App\Core\Seo;
 use App\Core\View;
+use App\Models\Book;
 use App\Models\Film;
 use App\Models\Media;
 use App\Models\Post;
@@ -34,6 +35,7 @@ final class HomeController
             'milestones' => $film !== null ? Film::milestones((int) $film['id']) : [],
             'achievements' => (array) Setting::json('achievements', []),
             'latestPosts' => Post::latest(3),
+            'featuredBooks' => Book::allVisible(),
         ]);
     }
 }

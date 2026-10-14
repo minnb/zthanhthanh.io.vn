@@ -43,6 +43,10 @@ $authorName = (string) ($site['authorName'] ?? '');
     <?= $post['html'] /* đã render qua Markdown safeMode */ ?>
   </div>
 
+  <?php if (!empty($books)): ?>
+    <?= partial('partials/book-card', ['books' => $books]) ?>
+  <?php endif; ?>
+
   <footer class="article__foot">
     <?php if (!empty($post['tags'])): ?>
       <ul class="tag-list" aria-label="Chủ đề">
