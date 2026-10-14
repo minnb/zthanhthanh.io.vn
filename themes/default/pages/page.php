@@ -17,9 +17,5 @@
       <?= partial('partials/collab-box') ?>
       <?= partial('partials/author-box') ?>
     </div>
-  <?php elseif ($page['slug'] === 'lien-he'): ?>
-    <div class="article__foot">
-      <?= partial('partials/collab-box') ?>
-    </div>
   <?php endif; ?>
 </article>
