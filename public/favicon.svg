@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Nền sáng thanh lịch, ấm áp chuẩn phong cách Editorial -->
+    <linearGradient id="brightBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#FFFDF9"/>
+      <stop offset="100%" stop-color="#F5EFE4"/>
+    </linearGradient>
+
+    <!-- Viền vàng đồng ánh kim tinh tế -->
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EED5A5"/>
+      <stop offset="50%" stop-color="#C59B4B"/>
+      <stop offset="100%" stop-color="#8E1F2F"/>
+    </linearGradient>
+
+    <!-- Màu đỏ Ruby nồng nàn (Màu nhận diện của Thanh Thanh - nhiệt huyết, dấn thân) -->
+    <linearGradient id="rubyGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#800F2F"/>
+      <stop offset="40%" stop-color="#A4133C"/>
+      <stop offset="100%" stop-color="#C9184A"/>
+    </linearGradient>
+
+    <!-- Màu vàng hoàng kim (Ánh sáng của hy vọng, vinh danh và sự nỗ lực) -->
+    <linearGradient id="goldGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#B8860B"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#F3E5AB"/>
+    </linearGradient>
+
+    <!-- Hào quang tỏa sáng của ngôi sao hy vọng -->
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#D4AF37" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Bóng đổ mềm tạo chiều sâu -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#8E1F2F" flood-opacity="0.12"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#2B211C" flood-opacity="0.08"/>
+    </filter>
+
+    <filter id="glowFilter" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#D4AF37" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- 1. KHUNG SQUIRCLE SÁNG, SANG TRỌNG VÀ THANH THOÁT -->
+  <rect x="18" y="18" width="476" height="476" rx="124" ry="124" fill="url(#brightBg)" stroke="url(#goldBorder)" stroke-width="10" filter="url(#softShadow)"/>
+
+  <!-- Vệt ánh sáng tỏa ra từ góc trên bên phải (Tia hy vọng & Tương lai) -->
+  <circle cx="400" cy="110" r="140" fill="url(#starGlow)"/>
+
+  <!-- 2. VÒNG CUNG NĂNG LƯỢNG BỨT PHÁ (Breakthrough Momentum Arc) -->
+  <!-- Một đường lượn sóng vàng kim quét từ dưới bánh xe vút thẳng lên bầu trời -->
+  <path d="M 90 330 C 90 415, 175 445, 255 435 C 345 425, 415 365, 430 270 C 440 205, 420 145, 400 115"
+        fill="none" stroke="url(#goldGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="240 10 30 10 80" opacity="0.85"/>
+
+  <!-- Các đường nan tỏa sáng về phía trước (Vận tốc & Dấn thân) -->
+  <g stroke="url(#goldGrad)" stroke-linecap="round" opacity="0.35">
+    <line x1="140" y1="410" x2="190" y2="435" stroke-width="4"/>
+    <line x1="200" y1="440" x2="260" y2="450" stroke-width="4"/>
+    <line x1="280" y1="445" x2="340" y2="435" stroke-width="4"/>
+  </g>
+
+  <!-- 3. HÌNH TƯỢNG BÁNH XE LĂN KIÊN CƯỜNG (The Resilient Wheel) -->
+  <g transform="translate(195, 305)">
+    <!-- Vòng vành ngoài bánh xe kép (màu đỏ Ruby phối vàng kim) -->
+    <circle cx="0" cy="0" r="102" fill="none" stroke="url(#rubyGrad)" stroke-width="20"/>
+    <circle cx="0" cy="0" r="76" fill="none" stroke="url(#goldGrad)" stroke-width="5" stroke-opacity="0.8"/>
+    
+    <!-- Các răng cưa nhịp phim điện ảnh (Cinematic Spokes / Perforations) -->
+    <g fill="url(#goldGrad)">
+      <circle cx="0" cy="-76" r="4"/>
+      <circle cx="54" cy="-54" r="4"/>
+      <circle cx="76" cy="0" r="4"/>
+      <circle cx="54" cy="54" r="4"/>
+      <circle cx="0" cy="76" r="4"/>
+      <circle cx="-54" cy="54" r="4"/>
+      <circle cx="-76" cy="0" r="4"/>
+      <circle cx="-54" cy="-54" r="4"/>
+    </g>
+
+    <!-- Nan hoa bánh xe cách điệu năng động -->
+    <line x1="0" y1="0" x2="-54" y2="54" stroke="url(#rubyGrad)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="54" y2="54" stroke="url(#rubyGrad)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="0" y1="0" x2="-70" y2="-20" stroke="url(#rubyGrad)" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- Trục tâm bánh xe (Center Hub) -->
+    <circle cx="0" cy="0" r="26" fill="#FFFDF9" stroke="url(#rubyGrad)" stroke-width="8"/>
+    <circle cx="0" cy="0" r="10" fill="url(#goldGrad)"/>
+    
+    <!-- Bánh lăn phụ phía trước (Front Caster Wheel) tạo dáng xe chuyển động -->
+    <circle cx="120" cy="88" r="18" fill="none" stroke="url(#rubyGrad)" stroke-width="6"/>
+    <circle cx="120" cy="88" r="6" fill="url(#goldGrad)"/>
+    <line x1="80" y1="55" x2="120" y2="88" stroke="url(#rubyGrad)" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- 4. HÌNH TƯỢNG NGƯỜI VƯỢN LÊN CHIẾN THẮNG (The Triumphant Overcomer) -->
+  <!-- Dáng ngồi kiêu hãnh hướng về phía trước, tay vươn cao chạm tới ước mơ -->
+  <g>
+    <!-- Khung xe & Phần chân vươn về phía trước -->
+    <path d="M 195 305 L 255 305 C 275 305, 290 320, 295 345 L 305 380"
+          fill="none" stroke="url(#rubyGrad)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Thân người kiêu hãnh rướn về phía trước (Ý chí kiên cường, không bỏ cuộc) -->
+    <path d="M 215 300 C 235 250, 265 210, 295 200 C 315 195, 325 210, 310 230 C 285 265, 255 300, 235 315 Z"
+          fill="url(#rubyGrad)"/>
+
+    <!-- Đầu người (Ánh nhìn hướng về phía trước và bầu trời) -->
+    <circle cx="310" cy="155" r="34" fill="url(#rubyGrad)"/>
+    <!-- Vầng sáng trí tuệ & nghị lực quanh đầu -->
+    <circle cx="310" cy="155" r="42" fill="none" stroke="url(#goldGrad)" stroke-width="3" stroke-dasharray="6 6"/>
+
+    <!-- Cánh tay vươn cao mạnh mẽ xé toang mọi giới hạn (Reaching Arm of Triumph) -->
+    <!-- Cánh tay nối liền từ vai (305, 195) vút thẳng lên vị trí (395, 105) -->
+    <path d="M 305 195 Q 345 160 395 110"
+          fill="none" stroke="url(#rubyGrad)" stroke-width="16" stroke-linecap="round"/>
+    
+    <!-- Cánh tay thứ hai cầm bánh xe lăn thể hiện sự dấn thân, tự lập điều khiển số phận -->
+    <path d="M 285 220 C 265 240, 230 250, 195 220"
+          fill="none" stroke="url(#rubyGrad)" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <!-- 5. NGỌI BÚT & NGÔI SAO HY VỌNG Ở ĐỈNH CAO (The Golden Star & Pen of Destiny) -->
+  <!-- Bàn tay đang vươn tới một ngôi sao 4 cánh phát sáng lấp lánh (Thành tựu & Khát vọng) -->
+  <g transform="translate(400, 105)" filter="url(#glowFilter)">
+    <!-- Ngôi sao 4 cánh hoàng kim rực rỡ -->
+    <path d="M 0 -36 Q 3 -6, 36 0 Q 3 6, 0 36 Q -3 6, -36 0 Q -3 -6, 0 -36 Z"
+          fill="url(#goldGrad)"/>
+    <!-- Tâm sao ngọc bích đỏ -->
+    <circle cx="0" cy="0" r="7" fill="#8E1F2F"/>
+    
+    <!-- Vệt sáng lấp lánh phụ -->
+    <circle cx="16" cy="-22" r="3.5" fill="url(#goldGrad)"/>
+    <circle cx="-20" cy="20" r="2.5" fill="url(#goldGrad)"/>
+    <circle cx="28" cy="14" r="2" fill="url(#goldGrad)"/>
+  </g>
+
+  <!-- Chữ ký tinh tế "TT" (Thanh Thanh) khắc trang trọng ở góc dưới bên phải -->
+  <g transform="translate(360, 420)" opacity="0.6">
+    <text font-family="'Be Vietnam Pro', serif, sans-serif" font-weight="700" font-size="28" fill="#8E1F2F" letter-spacing="2">TT</text>
+  </g>
+</svg>

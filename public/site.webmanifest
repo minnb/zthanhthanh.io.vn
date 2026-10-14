@@ -1,0 +1,19 @@
+{
+  "name": "Thanh Thanh – Biên kịch",
+  "short_name": "Thanh Thanh",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#8E1F2F",
+  "background_color": "#FFFDF9",
+  "display": "standalone"
+}
