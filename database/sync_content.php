@@ -15,18 +15,35 @@ require $root . '/app/bootstrap.php';
 
 use App\Core\Db;
 
+// 1. Chạy tự động các file migrations (cập nhật cấu trúc bảng, thống kê, menu, blocks)
+$migrationsDir = __DIR__ . '/migrations';
+if (is_dir($migrationsDir)) {
+    $migrations = glob($migrationsDir . '/*.sql') ?: [];
+    sort($migrations);
+    foreach ($migrations as $mFile) {
+        $mName = basename($mFile);
+        echo "==> Đang kiểm tra & chạy migration: {$mName}...\n";
+        try {
+            Db::pdo()->exec((string) file_get_contents($mFile));
+            echo " OK  Migration {$mName} hoàn tất!\n";
+        } catch (\Throwable $e) {
+            echo " !!  Bỏ qua hoặc đã tồn tại ({$mName}): " . $e->getMessage() . "\n";
+        }
+    }
+}
+
+// 2. Đồng bộ bài viết, chuyên mục, media, sách và trang tĩnh
 $sqlFile = __DIR__ . '/posts_and_media.sql';
 if (!is_file($sqlFile)) {
     fwrite(STDERR, "Lỗi: Không tìm thấy file {$sqlFile}\n");
     exit(1);
 }
 
-echo "==> Đang đồng bộ nội dung bài viết và media vào Database...\n";
-
+echo "==> Đang đồng bộ nội dung bài viết, sách và media vào Database...\n";
 $sql = file_get_contents($sqlFile);
 try {
     Db::pdo()->exec($sql);
-    echo " OK  Đã nạp thành công toàn bộ 12 bài viết, chuyên mục, tag và media vào cơ sở dữ liệu!\n";
+    echo " OK  Đã nạp thành công toàn bộ bài viết, sách, chuyên mục, tag và media vào cơ sở dữ liệu!\n";
 } catch (\Throwable $e) {
     fwrite(STDERR, "LỖI khi chạy SQL: " . $e->getMessage() . "\n");
     exit(1);
