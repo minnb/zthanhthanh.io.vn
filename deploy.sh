@@ -13,7 +13,7 @@
 
 set -euo pipefail
 
-BRANCH="${BRANCH:-main}"
+BRANCH="${BRANCH:-}"
 SITE_URL="${SITE_URL:-}"
 MODE="deploy"
 
@@ -81,6 +81,7 @@ PHP="$(find_php)" || die "Không tìm thấy PHP 8.2+. Đặt PHP_BIN=/đường
 info "PHP: $PHP ($("$PHP" -r 'echo PHP_VERSION;'))"
 
 CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+BRANCH="${BRANCH:-$CURRENT_BRANCH}"
 [ "$CURRENT_BRANCH" = "$BRANCH" ] || die "Đang ở nhánh '$CURRENT_BRANCH', khác nhánh deploy '$BRANCH'."
 
 # Không deploy khi có sửa tay chưa commit trên hosting (tránh mất việc / xung đột)
