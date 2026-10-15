@@ -38,10 +38,13 @@ final class Setting
         self::$cache = null;
     }
 
-    /** Thời điểm sửa cài đặt gần nhất (lastmod cho trang chủ trong sitemap). */
+    /**
+     * Thời điểm sửa cài đặt gần nhất (lastmod cho trang chủ trong sitemap).
+     * Bỏ qua khóa nội bộ stats_* (salt thống kê đổi mỗi ngày, không phải nội dung).
+     */
     public static function lastModified(): ?string
     {
-        $value = Db::value('SELECT MAX(updated_at) FROM settings');
+        $value = Db::value("SELECT MAX(updated_at) FROM settings WHERE `key` NOT LIKE 'stats\\_%'");
         return $value === null ? null : (string) $value;
     }
 

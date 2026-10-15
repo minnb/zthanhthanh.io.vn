@@ -19,6 +19,9 @@ final class HomeController
     {
         $film = Film::featured();
         $blocks = Setting::json('home_blocks', []);
+        $blocks = is_array($blocks) ? array_values(array_filter($blocks, 'is_string')) : [];
+        // Khối của Góc sáng tác có thể bật trên trang chủ (tools/activate_reading_shelf.php) -> nạp thêm studio.css
+        $hasStudioBlocks = array_intersect(['script-preview', 'reading-shelf'], $blocks) !== [];
         $site = Site::info();
         // Ảnh chân dung đầu trang (Cài đặt → hero_media_id); chỉ tra DB ở trang chủ. Không có/đã xóa -> hình minh họa của theme
         $heroId = (int) Setting::get('hero_media_id', '');
@@ -26,16 +29,18 @@ final class HomeController
 
         return View::render('pages/home', [
             'heroImage' => $heroImage,
+            'styles' => $hasStudioBlocks ? ['home', 'studio'] : ['home'],
             'title' => '',
             'jsonLd' => [Seo::websiteSchema($site), Seo::personSchema($site)],
             'description' => (string) Setting::get('mission_intro', ''),
-            'blocks' => is_array($blocks) ? $blocks : [],
+            'blocks' => $blocks,
             'featuredFilm' => $film,
             'allFilms' => Film::all(),
             'milestones' => $film !== null ? Film::milestones((int) $film['id']) : [],
             'achievements' => (array) Setting::json('achievements', []),
             'latestPosts' => Post::latest(3),
-            'featuredBooks' => Book::allVisible(),
+            // Chỉ truy vấn tủ sách khi trang chủ thật sự có khối reading-shelf
+            'featuredBooks' => in_array('reading-shelf', $blocks, true) ? Book::allVisible() : [],
         ]);
     }
 }

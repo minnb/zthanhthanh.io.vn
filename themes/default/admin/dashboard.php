@@ -8,6 +8,7 @@
  * @var array<string, int> $counts
  * @var list<array<string, mixed>> $recent
  * @var list<array{id: int, title: string, issues: list<string>}> $warnings
+ * @var array{today: int, week: int}|null $traffic  null khi chưa có bảng thống kê
  * @var array<string, mixed> $user
  */
 $stats = [
@@ -74,6 +75,14 @@ $stats = [
     </li>
   <?php endforeach; ?>
 </ul>
+
+<?php if (!empty($traffic)): ?>
+  <a class="traffic-strip" href="<?= e(url('/admin/stats')) ?>">
+    <span>Lượt xem hôm nay <strong><?= (int) $traffic['today'] ?></strong></span>
+    <span>7 ngày qua <strong><?= (int) $traffic['week'] ?></strong></span>
+    <span class="text-accent">Xem thống kê →</span>
+  </a>
+<?php endif; ?>
 
 <div class="admin-grid">
   <section class="panel" aria-labelledby="recent-h">

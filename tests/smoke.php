@@ -7,6 +7,7 @@ declare(strict_types=1);
  */
 return [
     ['/', 200],
+    ['/bai-viet', 200],
     ['/hau-truong-bien-kich', 200],
     ['/goc-nghe', 200],
     ['/dien-thuyet', 200],
@@ -20,6 +21,7 @@ return [
     ['/gioi-thieu', 200],
     ['/lien-he', 200],
     ['/goc-sang-tac', 200],
+    ['/tu-sach', 200],
     ['/en/press-kit', 200],
 
     // SEO kỹ thuật
@@ -40,4 +42,5 @@ return [
     ['/phim/xyz', 404],
     ['/goc-nghe?trang=abc', 404],
     ['/goc-nghe?trang=99', 404],
+    ['/bai-viet?trang=99', 404],
 ];

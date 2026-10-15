@@ -1,75 +1,50 @@
 <?php
 /**
- * Khối trang chủ: Tủ sách gối đầu giường của Biên kịch (Reading Shelf)
+ * Tủ sách gối đầu giường (Góc sáng tác): bìa chữ + lời tự sự của tác giả cho từng cuốn.
+ *
+ * Dùng ở Góc sáng tác (inStudio = true) và có thể bật làm khối trang chủ (home_blocks, xem
+ * tools/activate_reading_shelf.php; HomeController nạp thêm studio.css) – khi đó tự bọc container.
  *
  * @var list<array<string, mixed>> $featuredBooks
+ * @var bool|null $inStudio
  */
 if (empty($featuredBooks)) {
     return;
 }
+$inStudio = !empty($inStudio);
 ?>
-<section class="section section--reading-shelf" aria-labelledby="reading-shelf-title">
-  <div class="container">
-    <div class="section-head text-center">
-      <p class="eyebrow">Tủ Sách & Vốn Sống</p>
-      <h2 class="h-2" id="reading-shelf-title">Sách gối đầu giường của Biên kịch</h2>
-      <p class="section-head__lead">Những cuốn sách đã tiếp thêm chất liệu, nuôi dưỡng cảm xúc và đồng hành cùng mình qua những tháng năm nghịch cảnh.</p>
-    </div>
-
-    <div class="shelf-grid mt-6">
-      <?php
-      $displayBooks = isset($shelfLimit) ? array_slice($featuredBooks, 0, (int) $shelfLimit) : $featuredBooks;
-      foreach ($displayBooks as $book):
-      ?>
-        <article class="shelf-item">
-          <div class="shelf-item__cover">
-            <?php if (!empty($book['cover'])): ?>
-              <div class="shelf-item__book-3d">
-                <?= partial('partials/image', [
-                    'media' => $book['cover'],
-                    'ratio' => '3/4',
-                    'eager' => false,
-                    'sizes' => '(min-width: 960px) 180px, 140px'
-                ]) ?>
-                <div class="shelf-item__spine" aria-hidden="true"></div>
-              </div>
-            <?php else: ?>
-              <div class="shelf-item__spine-mockup" aria-hidden="true">
-                <span class="shelf-item__mockup-title"><?= e($book['title']) ?></span>
-                <span class="shelf-item__mockup-author"><?= e($book['author']) ?></span>
-              </div>
-            <?php endif; ?>
-          </div>
-
-          <div class="shelf-item__body">
-            <h3 class="shelf-item__title"><?= e($book['title']) ?></h3>
-            <p class="shelf-item__author">Tác giả: <strong><?= e($book['author']) ?></strong></p>
-
-            <?php if (!empty($book['note'])): ?>
-              <p class="shelf-item__note">“<?= e(mb_substr($book['note'], 0, 140)) ?><?= mb_strlen($book['note']) > 140 ? '...' : '' ?>”</p>
-            <?php endif; ?>
-
-            <div class="shelf-item__footer">
-              <?php if (!empty($book['post_url'])): ?>
-                <a href="<?= e(url($book['post_url'])) ?>" class="shelf-item__link-post">
-                  <span>Xem bài viết liên quan</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </a>
-              <?php endif; ?>
-
-              <?php if (!empty($book['affiliate_url'])): ?>
-                <a href="<?= e($book['affiliate_url']) ?>" target="_blank" rel="noopener sponsored" class="btn btn--sm btn--book-shelf">
-                  <span>Tìm đọc ↗</span>
-                </a>
-              <?php endif; ?>
-            </div>
-          </div>
-        </article>
-      <?php endforeach; ?>
-    </div>
-
-    <div class="shelf-note text-center mt-6">
-      <p class="small muted">☕ Nếu bạn chọn mua sách qua các liên kết này, bạn đang gửi một tách trà ấm tiếp sức cho những trang viết tiếp theo của mình. Cảm ơn bạn thật nhiều!</p>
+<?php if (!$inStudio): ?><div class="container section"><?php endif; ?>
+<section class="studio-panel" id="panel-books" aria-labelledby="shelf-heading">
+  <div class="section-head">
+    <div class="section-head__text">
+      <p class="eyebrow eyebrow--gold">Tủ sách gối đầu giường</p>
+      <h2 class="h-2" id="shelf-heading">Đọc để hiểu, để thương và để cố gắng</h2>
+      <p class="muted">Với một biên kịch, đọc sách không chỉ là giải trí, mà là cách tích lũy vốn sống và học cách thấu cảm với những nỗi đau vượt thời gian của con người.</p>
     </div>
   </div>
+  <ol class="shelf">
+    <?php foreach ($featuredBooks as $i => $book): ?>
+      <li>
+        <article class="book card">
+          <?= partial('partials/book-cover', ['book' => $book]) ?>
+          <div>
+            <p class="label book__num"><?= sprintf('%02d', $i + 1) ?></p>
+            <h3 class="book__title"><?= e((string) $book['title']) ?></h3>
+            <p class="book__author"><?= e((string) $book['author']) ?></p>
+            <?php if (!empty($book['note'])): ?><p class="book__note">“<?= e((string) $book['note']) ?>”</p><?php endif; ?>
+            <p class="book__links">
+              <?php if (!empty($book['post_url'])): ?>
+                <a class="text-link" href="<?= e(url((string) $book['post_url'])) ?>">Bài viết liên quan <?= icon('arrow-r') ?></a>
+              <?php endif; ?>
+              <?php if (!empty($book['affiliate_url'])): ?>
+                <a class="text-link" href="<?= e(link_url((string) $book['affiliate_url'])) ?>" target="_blank" rel="noopener sponsored">Tìm đọc <?= icon('arrow-ur') ?><span class="sr-only">(mở tab mới)</span></a>
+              <?php endif; ?>
+            </p>
+          </div>
+        </article>
+      </li>
+    <?php endforeach; ?>
+  </ol>
+  <p class="muted small mt-8">Nếu bạn chọn mua sách qua các liên kết này, bạn đang gửi một tách trà ấm tiếp sức cho những trang viết tiếp theo của mình. Cảm ơn bạn thật nhiều!</p>
 </section>
+<?php if (!$inStudio): ?></div><?php endif; ?>

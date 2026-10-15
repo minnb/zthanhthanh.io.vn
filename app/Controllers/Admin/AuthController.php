@@ -52,6 +52,7 @@ final class AuthController
         return View::render('admin/login', [
             'title' => 'Đăng nhập quản trị',
             'noindex' => true,
+            'trackable' => false,
             'error' => $error,
             'email' => $email,
             'next' => self::safeNext($next),

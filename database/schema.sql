@@ -6,6 +6,10 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS site_daily;
+DROP TABLE IF EXISTS referrers_daily;
+DROP TABLE IF EXISTS page_visitors_daily;
+DROP TABLE IF EXISTS page_views_daily;
 DROP TABLE IF EXISTS audit_log;
 DROP TABLE IF EXISTS redirects;
 DROP TABLE IF EXISTS settings;
@@ -282,4 +286,51 @@ CREATE TABLE audit_log (
   KEY idx_audit_entity (entity_type, entity_id),
   KEY idx_audit_time (created_at),
   CONSTRAINT fk_audit_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- Thống kê lượt truy cập (beacon POST /t từ app.js, xem Models/PageStats.php)
+-- Chỉ lưu số tổng hợp theo ngày, không lưu IP. Mã người xem = băm(salt đổi hằng ngày + IP + UA),
+-- chỉ giữ 2 ngày để đếm "người xem" và chống bơm số.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS page_views_daily (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  day        DATE NOT NULL,
+  path       VARCHAR(255) NOT NULL,
+  views      INT UNSIGNED NOT NULL DEFAULT 0,
+  visitors   INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_page_views_day_path (day, path)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS page_visitors_daily (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  day        DATE NOT NULL,
+  visitor    CHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  path       VARCHAR(255) NOT NULL,
+  hits       INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_page_visitors (day, visitor, path)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS referrers_daily (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  day        DATE NOT NULL,
+  source     VARCHAR(100) NOT NULL,
+  views      INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_referrers_day_source (day, source)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS site_daily (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  day        DATE NOT NULL,
+  views      INT UNSIGNED NOT NULL DEFAULT 0,
+  visitors   INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_site_daily_day (day)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

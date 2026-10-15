@@ -26,10 +26,14 @@ final class SeoController
         header('Content-Type: application/xml; charset=utf-8');
 
         // Trang chủ đổi khi có bài mới, sửa phim/dòng thời gian hoặc sửa cài đặt (sứ mệnh, thành tích...)
-        $homeDates = array_filter([Post::lastModified(), Film::lastModified(), Setting::lastModified()]);
+        $allPostsLastmod = Post::lastModified();
+        $homeDates = array_filter([$allPostsLastmod, Film::lastModified(), Setting::lastModified()]);
         $homeLastmod = $homeDates === [] ? null : max(array_map('strtotime', $homeDates));
         /** @var list<array{0: string, 1: ?string, 2?: ?string}> $entries [path, lastmod, ảnh] */
         $entries = [['/', $homeLastmod ? date('Y-m-d H:i:s', $homeLastmod) : null]];
+        if ($allPostsLastmod !== null) { // /bai-viet chưa có bài là noindex -> không đưa vào sitemap
+            $entries[] = ['/bai-viet', $allPostsLastmod];
+        }
         foreach (Category::all() as $cat) {
             $lastmod = Post::lastModified((int) $cat['id']);
             if ($lastmod !== null) { // danh mục chưa có bài là noindex -> không đưa vào sitemap
@@ -76,6 +80,7 @@ final class SeoController
         return "User-agent: *\n"
             . "Disallow: {$base}/admin\n"
             . "Disallow: {$base}/_dev\n"
+            . "Disallow: {$base}/t\$\n" // "$" = khớp đúng /t, không chặn /tu-sach
             . "Allow: {$base}/\n\n"
             . 'Sitemap: ' . url('/sitemap.xml') . "\n";
     }

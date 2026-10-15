@@ -17,11 +17,7 @@ final class Book
             WHERE b.is_visible = 1
             ORDER BY b.sort_order ASC, b.id ASC');
 
-        $covers = Media::findMany(array_map(static fn (array $b): int => (int) ($b['cover_media_id'] ?? 0), $books));
-        return array_map(
-            static fn (array $b): array => self::decorate($b, $covers[(int) ($b['cover_media_id'] ?? 0)] ?? null),
-            $books
-        );
+        return array_map([self::class, 'decorate'], $books);
     }
 
     /** @return list<array<string, mixed>> */
@@ -35,24 +31,18 @@ final class Book
             ORDER BY b.sort_order ASC, b.id ASC', [
             'post_id' => $postId,
         ]);
-        if ($books === []) {
-            return [];
-        }
-        $covers = Media::findMany(array_map(static fn (array $b): int => (int) ($b['cover_media_id'] ?? 0), $books));
-        return array_map(
-            static fn (array $b): array => self::decorate($b, $covers[(int) ($b['cover_media_id'] ?? 0)] ?? null),
-            $books
-        );
+        return array_map([self::class, 'decorate'], $books);
     }
 
     /**
+     * Thêm post_url (bài viết liên quan). Không tải ảnh bìa: theme hiển thị bìa chữ
+     * (partials/book-cover), cover_media_id hiện chưa dùng ở trang công khai.
+     *
      * @param array<string, mixed> $book
-     * @param array<string, mixed>|null $cover
      * @return array<string, mixed>
      */
-    private static function decorate(array $book, ?array $cover = null): array
+    private static function decorate(array $book): array
     {
-        $book['cover'] = $cover ?? ($book['cover_media_id'] ? Media::find((int) $book['cover_media_id']) : null);
         if (!empty($book['post_slug']) && !empty($book['category_slug'])) {
             $book['post_url'] = '/' . $book['category_slug'] . '/' . $book['post_slug'];
         } else {

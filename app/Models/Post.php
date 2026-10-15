@@ -25,7 +25,54 @@ final class Post
     public static function latest(int $limit = 3): array
     {
         $rows = Db::all(self::SELECT . ' WHERE ' . self::PUBLIC_WHERE . ' ORDER BY p.published_at DESC, p.id DESC LIMIT ' . max(1, $limit));
-        return array_map([self::class, 'card'], $rows);
+        return self::cards($rows);
+    }
+
+    /**
+     * Số bài công khai theo từng danh mục (thanh chuyên mục ở trang danh sách). Danh mục 0 bài vẫn trả về.
+     *
+     * @return list<array{id: int, slug: string, name: string, total: int}>
+     */
+    public static function countByCategory(): array
+    {
+        $rows = Db::all(
+            'SELECT c.id, c.slug, c.name, COUNT(p.id) AS total
+             FROM categories c
+             LEFT JOIN posts p ON p.category_id = c.id AND ' . self::PUBLIC_WHERE . '
+             GROUP BY c.id, c.slug, c.name, c.sort_order
+             ORDER BY c.sort_order, c.id'
+        );
+        return array_map(static fn (array $r): array => [
+            'id' => (int) $r['id'],
+            'slug' => (string) $r['slug'],
+            'name' => (string) $r['name'],
+            'total' => (int) $r['total'],
+        ], $rows);
+    }
+
+    /**
+     * Bài liền trước (cũ hơn) và liền sau (mới hơn) theo ngày đăng, trên toàn site.
+     *
+     * @param array<string, mixed> $post Bài đang xem (cần id, published_at)
+     * @return array{prev: array<string, mixed>|null, next: array<string, mixed>|null}
+     */
+    public static function adjacent(array $post): array
+    {
+        $params = ['pub' => (string) $post['published_at'], 'pub2' => (string) $post['published_at'], 'id' => (int) $post['id']];
+        $older = Db::one(
+            self::SELECT . ' WHERE ' . self::PUBLIC_WHERE . ' AND (p.published_at < :pub OR (p.published_at = :pub2 AND p.id < :id))
+             ORDER BY p.published_at DESC, p.id DESC LIMIT 1',
+            $params
+        );
+        $newer = Db::one(
+            self::SELECT . ' WHERE ' . self::PUBLIC_WHERE . ' AND (p.published_at > :pub OR (p.published_at = :pub2 AND p.id > :id))
+             ORDER BY p.published_at ASC, p.id ASC LIMIT 1',
+            $params
+        );
+        return [
+            'prev' => $older !== null ? ['title' => (string) $older['title'], 'url' => self::url($older)] : null,
+            'next' => $newer !== null ? ['title' => (string) $newer['title'], 'url' => self::url($newer)] : null,
+        ];
     }
 
     /**
@@ -57,7 +104,7 @@ final class Post
             $params
         );
         return [
-            'items' => array_map([self::class, 'card'], $rows),
+            'items' => self::cards($rows),
             'total' => $total,
             'page' => $page,
             'pages' => $pages,
@@ -100,7 +147,7 @@ final class Post
              LIMIT ' . max(1, $limit),
             ['id' => $post['id'], 'id2' => $post['id'], 'cat' => $post['category_slug'] ?? '']
         );
-        return array_map([self::class, 'card'], $rows);
+        return self::cards($rows);
     }
 
     /**
@@ -116,7 +163,7 @@ final class Post
              ORDER BY p.published_at DESC LIMIT ' . max(1, $limit),
             ['tag' => $tagSlug]
         );
-        return array_map([self::class, 'card'], $rows);
+        return self::cards($rows);
     }
 
     /**
@@ -176,7 +223,23 @@ final class Post
     }
 
     /**
-     * Dữ liệu gọn cho thẻ bài viết.
+     * Thẻ bài viết kèm ảnh bìa: tải mọi ảnh bìa trong một truy vấn (tránh N+1).
+     *
+     * @param list<array<string, mixed>> $rows
+     * @return list<array<string, mixed>>
+     */
+    private static function cards(array $rows): array
+    {
+        $covers = Media::findMany(array_map(static fn (array $r): int => (int) ($r['cover_media_id'] ?? 0), $rows));
+        return array_map(static function (array $row) use ($covers): array {
+            $card = self::card($row);
+            $card['cover'] = $covers[(int) ($row['cover_media_id'] ?? 0)] ?? null;
+            return $card;
+        }, $rows);
+    }
+
+    /**
+     * Dữ liệu gọn cho thẻ bài viết (không gồm ảnh – xem cards()).
      *
      * @param array<string, mixed> $row
      * @return array<string, mixed>

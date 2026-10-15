@@ -1,0 +1,21 @@
+-- Migration 2026-10-15: Theme 2026 (docs/tasks/ke-hoach-ap-dung-theme-2026.md).
+-- 1) Menu chính mới: Bài viết · Phim · Góc sáng tác · Giới thiệu · Liên hệ · EN · Press kit (nút pill).
+--    (menu_main chưa có màn sửa trong admin giai đoạn 1 nên ghi đè trực tiếp.)
+-- 2) Thêm khối trang chủ "collab-invite" (lời mời gửi kịch bản) vào cuối home_blocks nếu chưa có;
+--    giữ nguyên thứ tự các khối đang có.
+-- 3) Setting "about_page" (JSON): 3 chương, câu trích, dòng thời gian sự nghiệp của trang Giới thiệu
+--    (pages/about.php chỉ hiển thị). INSERT IGNORE: đã có thì giữ nguyên bản đang dùng.
+-- Chạy MỘT lần trên DB đã có dữ liệu; chạy lại cũng không sao (không xóa gì, không nhân đôi khối).
+-- mysql -u USER -p --default-character-set=utf8mb4 TEN_DB -e "source 20261015_theme_2026_menu_blocks.sql"
+SET NAMES utf8mb4;
+
+INSERT INTO settings (`key`, `value`) VALUES
+  ('menu_main', '[{"label":"Bài viết","url":"/bai-viet"},{"label":"Phim","url":"/phim"},{"label":"Góc sáng tác","url":"/goc-sang-tac"},{"label":"Giới thiệu","url":"/gioi-thieu"},{"label":"Liên hệ","url":"/lien-he"},{"label":"EN · Press kit","url":"/en/press-kit","style":"button"}]')
+ON DUPLICATE KEY UPDATE `value` = VALUES(`value`);
+
+UPDATE settings
+SET `value` = JSON_ARRAY_APPEND(`value`, '$', 'collab-invite')
+WHERE `key` = 'home_blocks' AND JSON_VALID(`value`) AND NOT JSON_CONTAINS(`value`, '"collab-invite"');
+
+INSERT IGNORE INTO settings (`key`, `value`) VALUES
+  ('about_page', '{"chapters":[{"mark":"15","unit":"tuổi","title":"Cánh cửa khép lại","text":"Căn bệnh viêm khớp dạng thấp ập đến. Các khớp xương sưng tấy, co rút; từ một cô bé nhanh nhẹn, mình mất dần khả năng đi lại rồi nằm liệt hoàn toàn. Gần 10 năm, cuộc sống gói gọn trong bốn bức tường."},{"mark":"25","unit":"tuổi","title":"Chiếc chìa khóa mang tên “Máy tính”","text":"Gia đình dành dụm mua cho mình một chiếc máy tính kết nối Internet. Mình đọc ngấu nghiến, viết những dòng tản văn đầu tiên, rồi tự học biên kịch qua các khóa học trực tuyến."},{"mark":"2026","unit":"","title":"Đưa ĐỢI tới Manila","text":"Tự viết, tự đóng vai An với kinh phí tự túc chưa tới 50 triệu đồng. ĐỢI trở thành 1 trong 2 đại diện Việt Nam ở Top 7 Grand Finalists Inspiring Asia 2026."}],"quote":{"text":"Chúa đã khiến mình trở nên tàn tật. Đó là vì Người tin rằng mình có khả năng chịu đựng.","cite":"Kito Aya · Một lít nước mắt"},"career":[{"year":"2024","items":[{"when":"Nhạc kịch thiếu nhi","title":"“Ước mơ của em” đạt giải cao nhất","body":"Cuộc thi sáng tác kịch bản cho trẻ em do Nhà hát Tuổi Trẻ phối hợp cùng Nhà hát Sangsang Maru (Hàn Quốc) tổ chức. Nhân vật trung tâm – cô bé Nhất Linh ngồi xe lăn – là hình bóng của chính mình năm 15 tuổi.","highlight":false},{"when":"Lần chào dự án đầu tiên","title":"Mang “Đứa con đến từ cõi âm” đi gặp anh Đức Thịnh, chị Thanh Thúy","body":"Một đêm đông Hà Nội rét buốt. Kịch bản khi ấy còn non, cấu trúc nhiều lỗ hổng nên anh chị từ chối – nhưng mình mang về vô vàn trải nghiệm và một khát khao: phải hoàn thành bằng được câu chuyện này.","highlight":false}]},{"year":"2026","items":[{"when":"Phim ngắn ĐỢI ra đời","title":"Gần 3 tháng cho 8 phút phim","body":"Tìm ý tưởng, viết kịch bản, pitching ở số thứ tự 4 trước đạo diễn Trịnh Đình Lê Minh và chị Phạm Thị Hảo, rồi 2 ngày quay dưới nắng Sài Gòn với vai trò biên kịch kiêm vai chính An.","highlight":false},{"when":"Phim điện ảnh","title":"Top 7 From Script to Screen mùa 1","body":"Dự án “Đứa con đến từ cõi âm” vào Top 7. Ban tổ chức tạo điều kiện để mình pitching online vì việc di chuyển xe lăn vào TP.HCM quá phức tạp.","highlight":false},{"when":"Inspiring Vietnam","title":"Top 6 Phim ngắn xuất sắc tại SIHUB","body":"Buổi chiếu đầu tiên của ĐỢI tại Trung tâm Khởi nghiệp Sáng tạo SIHUB, TP.HCM. Đạo diễn Trịnh Đình Lê Minh trao giải cho Thanh Thanh.","highlight":false},{"when":"Diễn thuyết","title":"Lần đầu chia sẻ tại trụ sở Liên Hợp Quốc tại Việt Nam","body":"Bài chia sẻ 20 phút về câu hỏi “Làm thế nào để xây dựng một thế giới đáng sống hơn?” – cột mốc bước ra khỏi chiếc vỏ ốc an toàn 10 năm.","highlight":false},{"when":"10/2026 · Manila, Philippines","title":"Top 7 Grand Finalists Inspiring Asia 2026","body":"Sau Bán kết (1 trong 4 đại diện Việt Nam), ĐỢI là 1 trong 7 tác phẩm tranh tài tại Chung kết Inspiring Asia Micro Film Festival 2026 – và là 1 trong 2 đại diện của Việt Nam.","highlight":true}]}]}');

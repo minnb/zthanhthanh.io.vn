@@ -1,6 +1,6 @@
 <?php
 /**
- * Danh sách phim & dự án.
+ * Danh sách phim & dự án. Phim đang phát triển dùng thẻ tông tối "noir".
  *
  * @var list<array<string, mixed>> $films
  * @var list<array{label: string, url?: string}> $breadcrumb
@@ -8,29 +8,39 @@
 ?>
 <header class="container page-head">
   <?= partial('partials/breadcrumb', ['items' => $breadcrumb]) ?>
-  <p class="eyebrow">Phim & dự án</p>
+  <p class="eyebrow">Phim &amp; dự án</p>
   <h1 class="h-1">Phim</h1>
   <p class="lead">Những câu chuyện mình đã đưa lên màn ảnh, và những câu chuyện đang lớn lên cùng mình.</p>
 </header>
 
-<section class="container section" aria-label="Danh sách phim">
-  <div class="grid grid--2">
+<section class="container section section--flush-top" aria-label="Danh sách phim">
+  <ul class="grid grid--2" role="list">
     <?php foreach ($films as $film): ?>
-      <article class="film-card">
-        <a class="film-card__media" href="<?= e(url($film['url'])) ?>" tabindex="-1" aria-hidden="true">
-          <?php if (!empty($film['poster'])): ?>
-            <?= partial('partials/image', ['media' => $film['poster'], 'ratio' => \App\Core\Image::FRAME_POSTER, 'sizes' => '(min-width: 768px) 50vw, 100vw']) ?>
+      <?php $noir = empty($film['poster']) && ($film['status'] ?? '') === 'in_development'; ?>
+      <li>
+        <article class="film-card <?= $noir ? 'dark-surface' : 'card' ?>">
+          <?php if ($noir): ?>
+            <div class="noir-art" aria-hidden="true">
+              <div class="noir-art__moon"></div>
+              <?php if (!empty($film['title_en'])): ?><p class="noir-art__word" lang="en"><?= e($film['title_en']) ?></p><?php endif; ?>
+            </div>
           <?php else: ?>
-            <?= partial('partials/art-poster', ['filmTitle' => (string) $film['title'], 'caption' => (string) $film['caption']]) ?>
+            <span class="media">
+              <?php if (!empty($film['poster'])): ?>
+                <?= partial('partials/image', ['media' => $film['poster'], 'ratio' => 16 / 10, 'sizes' => '(min-width: 640px) 50vw, 100vw']) ?>
+              <?php else: ?>
+                <?= partial('partials/art-poster', ['filmTitle' => (string) $film['title'], 'caption' => (string) $film['caption']]) ?>
+              <?php endif; ?>
+            </span>
           <?php endif; ?>
-          <?php if (!empty($film['badge'])): ?><span class="badge"><?= e($film['badge']) ?></span><?php endif; ?>
-        </a>
-        <div class="film-card__body">
-          <p class="film-card__status"><?= e($film['status_label']) ?></p>
-          <h2 class="film-card__title"><a href="<?= e(url($film['url'])) ?>"><?= e($film['title']) ?></a></h2>
-          <?php if (!empty($film['logline'])): ?><p class="film-card__logline"><?= e($film['logline']) ?></p><?php endif; ?>
-        </div>
-      </article>
+          <div class="film-card__body">
+            <p><span class="badge label<?= $noir ? '' : ' badge--gold' ?>"><?= e($film['badge'] ?: $film['status_label']) ?></span></p>
+            <h2 class="film-card__title"><a href="<?= e(url($film['url'])) ?>"><?= e($film['title']) ?></a><?php if (!empty($film['caption'])): ?><small><?= e($film['caption']) ?></small><?php endif; ?></h2>
+            <?php if (!empty($film['logline'])): ?><p class="logline"><?= e($film['logline']) ?></p><?php endif; ?>
+            <div class="film-card__foot"><a class="text-link" href="<?= e(url($film['url'])) ?>">Xem phim <?= e($film['title']) ?> <?= icon('arrow-r') ?></a></div>
+          </div>
+        </article>
+      </li>
     <?php endforeach; ?>
-  </div>
+  </ul>
 </section>

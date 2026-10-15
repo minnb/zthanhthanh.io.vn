@@ -9,6 +9,7 @@ $isAdmin = \App\Core\Auth::can($user, 'admin');
 ?>
 <header class="admin-head"><h1 class="h-2">Thêm</h1></header>
 <ul class="menu-list">
+  <li><a href="<?= e(url('/admin/stats')) ?>">Thống kê lượt truy cập</a></li>
   <li><a href="<?= e(url('/admin/films')) ?>">Phim & dòng thời gian</a></li>
   <li><a href="<?= e(url('/admin/pages')) ?>">Trang tĩnh (Giới thiệu, Liên hệ, Press kit)</a></li>
   <li><a href="<?= e(url('/admin/posts?trash=1')) ?>">Thùng rác</a></li>

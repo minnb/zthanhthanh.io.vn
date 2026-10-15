@@ -19,6 +19,7 @@ $nav = [
     ['/admin/media', 'Thư viện ảnh', 'M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5'],
     ['/admin/films', 'Phim', 'M4 4h16v16H4zM8 4v16M16 4v16M4 9h4M16 9h4M4 15h4M16 15h4'],
     ['/admin/pages', 'Trang tĩnh', 'M6 3h9l4 4v14H6zM15 3v4h4'],
+    ['/admin/stats', 'Thống kê', 'M4 20V10M10 20V4M16 20v-8M22 20H2'],
 ];
 if ($isAdmin) {
     $nav[] = ['/admin/settings', 'Cài đặt', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12l2-1-2-4-2 1-2-2V4h-4v2l-2 2-2-1-2 4 2 1v0l-2 1 2 4 2-1 2 2v2h4v-2l2-2 2 1 2-4z'];

@@ -1,100 +1,101 @@
 <?php
 /**
- * Khối Trích đoạn kịch bản điện ảnh chuẩn mực (Screenplay Reader).
- * Thiết kế theo chuẩn Hollywood Screenplay Format: Scene Heading, Action, Character, Dialogue.
+ * Trình đọc kịch bản (Góc sáng tác): trang kịch bản chuẩn Hollywood (Scene Heading, Action, Character,
+ * Parenthetical, Dialogue, Transition) + chỉnh cỡ chữ (app.js) + thông tin phim + mốc làm phim.
+ *
+ * Dùng ở Góc sáng tác (inStudio = true, tiêu đề ẩn vì trang đã có tab) và có thể bật làm khối trang chủ
+ * (home_blocks, HomeController nạp thêm studio.css) – khi đó tự bọc container và hiện tiêu đề.
  *
  * @var array<string, mixed> $site
  * @var array<string, mixed>|null $featuredFilm
+ * @var list<array<string, mixed>> $milestones
+ * @var bool|null $inStudio
  */
-$contactEmail = (string) ($site['contactEmail'] ?? 'doicho147@gmail.com');
+$contactEmail = (string) ($site['contactEmail'] ?? '');
+$inStudio = !empty($inStudio);
 ?>
-<section class="container section section--line" id="script-excerpt" aria-labelledby="script-heading">
-  <div class="section__head">
+<?php if (!$inStudio): ?><div class="container section"><?php endif; ?>
+<section class="studio-panel" id="panel-script" aria-labelledby="script-heading">
+  <?php if ($inStudio): ?>
+    <h2 class="sr-only" id="script-heading">Trích đoạn kịch bản phim ngắn ĐỢI</h2>
+  <?php else: ?>
+    <div class="section-head">
+      <div class="section-head__text">
+        <p class="eyebrow">Góc sáng tác</p>
+        <h2 class="h-2" id="script-heading">Trích đoạn kịch bản “ĐỢI”</h2>
+      </div>
+      <a class="text-link" href="<?= e(url('/goc-sang-tac')) ?>">Vào Góc sáng tác <?= icon('arrow-r') ?></a>
+    </div>
+  <?php endif; ?>
+  <div class="studio-grid">
     <div>
-      <p class="eyebrow">TRÍCH ĐOẠN KỊCH BẢN · SCREENPLAY EXCERPT</p>
-      <h2 class="h-2 mt-2" id="script-heading">Không gian đọc kịch bản: "ĐỢI"</h2>
-    </div>
-    <span class="badge badge--script">Định dạng Kịch bản Phim</span>
-  </div>
-
-  <p class="lead section__intro">
-    Trích đoạn Cảnh 1 phim ngắn <em>ĐỢI</em> – tác phẩm lọt vào Chung kết <strong>Inspiring Asia 2026</strong> tại Manila.
-  </p>
-
-  <div class="script-reader">
-    <div class="script-reader__header">
-      <div class="script-reader__meta">
-        <span class="script-tag">DRAFT 3 · COMPETITION CUT</span>
-        <span class="script-title">KỊCH BẢN PHIM NGẮN: ĐỢI (WAITING)</span>
-      </div>
-      <div class="script-reader__author">Tác giả: <strong>Thanh Thanh</strong></div>
-    </div>
-
-    <div class="script-sheet" role="region" aria-label="Nội dung kịch bản">
-      <div class="script-page-marker">Trang 01 / 08</div>
-
-      <div class="script-scene-heading">
-        CẢNH 1: NGOẠI. NGÃ TƯ ĐƯỜNG PHỐ SÀI GÒN - CHIỀU MUỘN
+      <div class="script-toolbar">
+        <p class="btn-row"><span class="badge badge--neutral label" lang="en">Draft 3 · Competition cut</span><span class="badge label">Trích đoạn Cảnh 1</span></p>
+        <div class="font-ctrl card" role="group" aria-label="Cỡ chữ kịch bản" data-font-ctrl="script-sheet" hidden>
+          <button type="button" data-font="-1" aria-label="Giảm cỡ chữ">A−</button>
+          <output aria-live="polite">15px</output>
+          <button type="button" data-font="1" aria-label="Tăng cỡ chữ">A+</button>
+        </div>
       </div>
 
-      <p class="script-action">
-        Tiếng còi xe inh ỏi, khói bụi bốc lên từ dòng người tan tầm. Mặt đường nhựa loang loáng những vệt nước mưa chưa kịp khô.
-      </p>
-
-      <p class="script-action">
-        Ở góc vỉa hè cao hơn nửa gang tay so với lòng đường: AN (khoảng 30 tuổi, gương mặt thanh tú phảng phất nét mỏi mệt) ngồi bất động trên chiếc xe lăn điện. Ánh mắt cô dán chặt vào vạch sơn kẻ đường dành cho người đi bộ ở phía bên kia.
-      </p>
-
-      <p class="script-action">
-        Đèn tín hiệu chuyển sang XANH. Dòng người bộ hành ùa qua. An đưa tay nắm lấy cần điều khiển, đẩy nhẹ. Bánh xe lăn chỉ kịp khựng lại ngay mép vỉa hè gồ ghề. Không có ram dốc tiếp cận.
-      </p>
-
-      <div class="script-dialogue-block">
-        <div class="script-character">AN</div>
-        <div class="script-parenthetical">(tự lẩm bẩm, giọng chùng xuống)</div>
-        <p class="script-dialogue">
-          Lại phải đợi sao...
-        </p>
+      <div class="script-sheet" id="script-sheet" role="region" aria-label="Nội dung kịch bản">
+        <span class="sc-page">1.</span>
+        <p>MỞ CẢNH <span lang="en">(FADE IN:)</span></p>
+        <p class="sc-heading"><span>1</span><span>NGOẠI. NGÃ TƯ ĐƯỜNG PHỐ SÀI GÒN – CHIỀU MUỘN</span><span>1</span></p>
+        <p class="sc-action">Tiếng còi xe inh ỏi, khói bụi bốc lên từ dòng người tan tầm. Mặt đường nhựa loang loáng những vệt nước mưa chưa kịp khô.</p>
+        <p class="sc-action">Ở góc vỉa hè cao hơn nửa gang tay so với lòng đường: AN (khoảng 30 tuổi, gương mặt thanh tú phảng phất nét mỏi mệt) ngồi bất động trên chiếc xe lăn điện. Ánh mắt cô dán chặt vào vạch sơn kẻ đường dành cho người đi bộ ở phía bên kia.</p>
+        <p class="sc-action">Đèn tín hiệu chuyển sang XANH. Dòng người bộ hành ùa qua. An đưa tay nắm lấy cần điều khiển, đẩy nhẹ. Bánh xe lăn chỉ kịp khựng lại ngay mép vỉa hè gồ ghề. Không có ram dốc tiếp cận.</p>
+        <div class="sc-dialogue">
+          <p class="sc-char">An</p>
+          <p class="sc-paren">(tự lẩm bẩm, giọng chùng xuống)</p>
+          <p class="sc-line">Lại phải đợi sao...</p>
+        </div>
+        <p class="sc-action">Một vài người đi đường lướt qua, ánh mắt tò mò nhìn chiếc xe lăn rồi vội vã quay đi. An siết chặt ngón tay vào tay vịn kim loại lạnh toát. Cô ngước nhìn đồng hồ: 17 giờ 45 phút. Cuộc hẹn quan trọng chỉ còn vỏn vẹn 15 phút.</p>
+        <div class="sc-dialogue">
+          <p class="sc-char">An</p>
+          <p class="sc-paren">(nhìn thẳng vào ống kính máy quay, mắt ánh lên sự kiên quyết)</p>
+          <p class="sc-line">Nếu mình cứ tiếp tục chờ một bàn tay của ai đó đến cứu... thì mình sẽ mắc kẹt ở ngã tư này suốt đời.</p>
+        </div>
+        <p class="sc-action">An gạt nút khóa an toàn. Động cơ xe lăn điện rít lên một âm thanh dứt khoát. Cô bắt đầu xoay bánh tìm lối thoát bằng chính đôi tay của mình.</p>
+        <p class="sc-trans">CẮT SANG <span lang="en">(CUT TO:)</span></p>
       </div>
+      <p class="muted small mt-5">Quy ước: NỘI. = <span lang="en">INT.</span> (trong nhà) · NGOẠI. = <span lang="en">EXT.</span> (ngoài trời) · Tên nhân vật viết hoa, chỉ dẫn diễn xuất đặt trong ngoặc.</p>
 
-      <p class="script-action">
-        Một vài người đi đường lướt qua, ánh mắt tò mò nhìn chiếc xe lăn rồi vội vã quay đi. An siết chặt ngón tay vào tay vịn kim loại lạnh toát. Cô ngước nhìn đồng hồ: 17 giờ 45 phút. Cuộc hẹn quan trọng chỉ còn vỏn vẹn 15 phút.
-      </p>
-
-      <div class="script-dialogue-block">
-        <div class="script-character">AN</div>
-        <div class="script-parenthetical">(nhìn thẳng vào ống kính máy quay, mắt ánh lên sự kiên quyết)</div>
-        <p class="script-dialogue">
-          Nếu mình cứ tiếp tục chờ một bàn tay của ai đó đến cứu... thì mình sẽ mắc kẹt ở ngã tư này suốt đời.
-        </p>
-      </div>
-
-      <p class="script-action">
-        An gạt nút khóa an toàn. Động cơ xe lăn điện rít lên một âm thanh dứt khoát. Cô bắt đầu xoay bánh tìm lối thoát bằng chính đôi tay của mình.
-      </p>
-
-      <div class="script-transition">
-        CẮT SANG (CUT TO:)
+      <div class="cta-box mt-8">
+        <div>
+          <h3 class="h-3">Thảo luận về kịch bản đầy đủ hoặc cơ hội hợp tác</h3>
+          <p>Mình luôn sẵn lòng gửi trọn bộ Full Script, Treatment chi tiết và Pitch Deck dự án cho các đạo diễn, nhà sản xuất và liên hoan phim quan tâm.</p>
+        </div>
+        <div class="btn-row">
+          <?php if ($contactEmail !== ''): ?>
+            <a class="btn btn--primary btn--sm" href="mailto:<?= e($contactEmail) ?>?subject=<?= rawurlencode('[Screenplay Request] Yêu cầu kịch bản hoàn chỉnh: ĐỢI') ?>"><?= icon('mail') ?>Nhận Full Script</a>
+          <?php endif; ?>
+          <a class="btn btn--outline btn--sm" href="<?= e(url('/lien-he')) ?>">Trò chuyện &amp; kết nối</a>
+        </div>
       </div>
     </div>
 
-    <!-- Hộp kêu gọi hợp tác dành cho Đạo diễn & Nhà sản xuất -->
-    <div class="script-collab-cta">
-      <div class="script-collab-cta__text">
-        <h3 class="script-collab-cta__title">Thảo luận về kịch bản đầy đủ hoặc cơ hội hợp tác</h3>
-        <p class="script-collab-cta__desc">
-          Mình luôn sẵn lòng gửi trọn bộ Full Script, Treatment chi tiết và Pitch Deck dự án cho các đạo diễn, nhà sản xuất và liên hoan phim quan tâm.
-        </p>
-      </div>
-      <div class="script-collab-cta__actions">
-        <a class="btn btn--primary" href="mailto:<?= e($contactEmail) ?>?subject=<?= rawurlencode('[Screenplay Request] Yêu cầu kịch bản hoàn chỉnh: ĐỢI') ?>">
-          <span>Nhận Full Script qua Email</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-        </a>
-        <a class="btn btn--outline" href="<?= e(url('/lien-he')) ?>">
-          <span>Trò chuyện & Kết nối →</span>
-        </a>
-      </div>
-    </div>
+    <aside aria-label="Thông tin kịch bản">
+      <?php if (!empty($featuredFilm)): ?>
+        <div class="side-card card">
+          <h3 class="h-3">Thông tin phim</h3>
+          <dl class="facts">
+            <div><dt>Tựa phim</dt><dd><?= e((string) $featuredFilm['title']) ?><?= !empty($featuredFilm['title_en']) ? ' (<span lang="en">' . e((string) $featuredFilm['title_en']) . '</span>)' : '' ?></dd></div>
+            <?php if (!empty($featuredFilm['genre'])): ?><div><dt>Thể loại</dt><dd><?= e((string) $featuredFilm['genre']) ?></dd></div><?php endif; ?>
+            <?php if (!empty($featuredFilm['duration_note']) || !empty($featuredFilm['duration_min'])): ?><div><dt>Thời lượng</dt><dd><?= e((string) ($featuredFilm['duration_note'] ?: $featuredFilm['duration_min'] . ' phút')) ?></dd></div><?php endif; ?>
+            <div><dt>Biên kịch</dt><dd><?= e((string) ($site['authorName'] ?? '')) ?> (kiêm vai An)</dd></div>
+            <?php if (!empty($featuredFilm['year'])): ?><div><dt>Năm</dt><dd><?= (int) $featuredFilm['year'] ?></dd></div><?php endif; ?>
+          </dl>
+          <a class="text-link mt-5" href="<?= e(url((string) $featuredFilm['url'])) ?>">Trang phim <?= e((string) $featuredFilm['title']) ?> <?= icon('arrow-r') ?></a>
+        </div>
+      <?php endif; ?>
+      <?php if (!empty($milestones)): ?>
+        <div class="side-card card">
+          <h3 class="h-3">Từ trang giấy đến màn ảnh</h3>
+          <?= partial('partials/timeline', ['milestones' => $milestones, 'compact' => true]) ?>
+        </div>
+      <?php endif; ?>
+    </aside>
   </div>
 </section>
+<?php if (!$inStudio): ?></div><?php endif; ?>

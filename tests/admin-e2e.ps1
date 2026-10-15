@@ -357,6 +357,85 @@ Login $jarR 'qa-admin@local.test' $pwA $true | Out-Null
 $pwA | & $php tools\create_user.php --site=thanhthanh --email=qa-admin@local.test --reset 2>$null | Out-Null
 Check 'create_user --reset -> thu hồi token ghi nhớ' ((Sql "SELECT COUNT(*) FROM remember_tokens WHERE user_id=$uidA") -eq '0')
 
+Write-Output '== Thống kê lượt truy cập (beacon POST /t + trang admin) =='
+$BP = '/projects/thanhthanh/src/thanhthanh/public'
+$uaBrowser = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
+# Gửi beacon: body ghi ra file (tránh lỗi trích dẫn), trả mã HTTP
+function Beacon([string]$body, [string]$ua = $uaBrowser, [string[]]$headers = @()) {
+  [IO.File]::WriteAllText("$S\beacon.json", $body, (New-Object System.Text.UTF8Encoding($false)))
+  # UA rỗng: "-H User-Agent:" bỏ hẳn header (PowerShell 5.1 làm rơi đối số '' khi gọi exe)
+  $uaArgs = if ($ua -eq '') { @('-H', 'User-Agent:') } else { @('-A', $ua) }
+  $a = @('-s', '-o', 'NUL', '-w', '%{http_code}') + $uaArgs + @('-H', 'Content-Type: text/plain;charset=UTF-8')
+  foreach ($h in $headers) { $a += @('-H', $h) }
+  curl.exe @a --data-binary "@$S\beacon.json" "$B/t"
+}
+function Views([string]$path) { $v = Sql "SELECT CONCAT(views, '/', visitors) FROM page_views_daily WHERE day = CURDATE() AND path = '$path'"; if ($v) { $v } else { '0/0' } }
+Sql "DELETE FROM page_views_daily; DELETE FROM page_visitors_daily; DELETE FROM referrers_daily; DELETE FROM site_daily; DELETE FROM settings WHERE ``key`` LIKE 'stats\_%';" | Out-Null
+$film = Sql "SELECT slug FROM films ORDER BY id LIMIT 1"
+$fp = "/phim/$film"
+$code = Beacon "{`"p`":`"$BP$fp`",`"r`":`"https://l.facebook.com/`",`"f`":0}"
+Check 'Beacon hợp lệ -> 204, lượt xem 1, người xem 1' ($code -eq '204' -and (Views $fp) -eq '1/1') "$code / $(Views $fp)"
+Beacon "{`"p`":`"$BP$fp`",`"r`":`"https://l.facebook.com/`"}" | Out-Null
+Check 'Cùng người xem lại -> lượt xem 2, người xem vẫn 1' ((Views $fp) -eq '2/1') (Views $fp)
+Beacon "{`"p`":`"$BP$fp`",`"r`":`"`",`"f`":1}" 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Mobile/15E148 [FBAN/FBIOS]' | Out-Null
+Check 'Người khác (UA khác) -> lượt xem 3, người xem 2' ((Views $fp) -eq '3/2') (Views $fp)
+Check 'site_daily cộng đúng 3 lượt / 2 người' ((Sql "SELECT CONCAT(views, '/', visitors) FROM site_daily WHERE day = CURDATE()") -eq '3/2')
+Check 'Nguồn: l.facebook.com + fbclid đều gom vào facebook' ((Sql "SELECT views FROM referrers_daily WHERE day = CURDATE() AND source = 'facebook'") -eq '3')
+Check 'Không lưu IP: mã người xem là 32 ký tự hex' ((Sql "SELECT COUNT(*) FROM page_visitors_daily WHERE visitor NOT REGEXP '^[0-9a-f]{32}$'") -eq '0')
+$codes = @(
+  (Beacon "{`"p`":`"$BP/khong-ton-tai-abc`"}"),
+  (Beacon "{`"p`":`"$BP/admin`"}"),
+  (Beacon "{`"p`":`"$BP/_dev/health`"}"),
+  (Beacon "{`"p`":`"$BP/goc-nghe/bai-khong-co-that`"}"),
+  (Beacon "{`"p`":`"$BP/`"}" 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'),
+  (Beacon "{`"p`":`"$BP/`"}" ''),
+  (Beacon ("{`"p`":`"$BP/`",`"r`":`"" + ('x' * 1100) + "`"}")),
+  (Beacon "{`"p`":`"$BP/`"}" $uaBrowser @('Sec-Fetch-Site: cross-site')),
+  (Beacon "{`"p`":`"$BP/`"}" $uaBrowser @('Origin: https://evil.example')),
+  (Beacon "{`"p`":`"$BP/`"}" $uaBrowser @('Sec-Purpose: prefetch')),
+  (Beacon 'khong-phai-json')
+)
+Check 'Path lạ/admin/_dev/bài không có, bot, thiếu UA, body > 1KB, khác site, prefetch, JSON hỏng -> vẫn 204, KHÔNG ghi' (($codes | Where-Object { $_ -ne '204' }).Count -eq 0 -and (Sql "SELECT SUM(views) FROM site_daily WHERE day = CURDATE()") -eq '3') ($codes -join ',')
+$code = curl.exe -s -o NUL -w '%{http_code}' "$B/t"
+Check 'GET /t -> 404 (không ghi)' ($code -eq '404' -and (Sql "SELECT SUM(views) FROM site_daily WHERE day = CURDATE()") -eq '3') $code
+foreach ($i in 1..25) { Beacon "{`"p`":`"$BP/`"}" 'Mozilla/5.0 (X11; Linux x86_64) Firefox/131.0' | Out-Null }
+Check 'Chống bơm số: 1 người tối đa 20 lượt/trang/ngày' ((Views '/') -eq '20/1') (Views '/')
+Check 'Salt thống kê đã sinh cho hôm nay (một khóa "ngày:salt")' ((Sql "SELECT LEFT(``value``, 11) FROM settings WHERE ``key`` = 'stats_salt'") -eq (Sql "SELECT CONCAT(CURDATE(), ':')"))
+$robots = (curl.exe -s "$B/robots.txt") -join "`n"
+Check 'robots.txt chặn đúng /t (có $), không chặn /tu-sach' ($robots -match [regex]::Escape("Disallow: $BP/t`$") -and $robots -notmatch [regex]::Escape("Disallow: $BP/t`n")) $robots
+$homeHtml = Get-Page '/' "$S\jar-pub.txt"
+$nf = (curl.exe -s "$B/khong-co-trang-nay") -join "`n"
+Check 'Trang công khai có meta tt-stats, trang 404 không có' ($homeHtml -match 'name="tt-stats"' -and $nf -notmatch 'tt-stats')
+$code = curl.exe -s -o NUL -w '%{http_code}' "$B/admin/stats"
+Check 'Khách vào /admin/stats -> chuyển về đăng nhập' ($code -eq '303') $code
+Login "$S\jar-stats.txt" 'qa-editor@local.test' $pwE | Out-Null
+$st = Get-Page '/admin/stats' "$S\jar-stats.txt"
+Check 'Editor xem được Thống kê: tổng 23 lượt, có trang phim + nguồn Facebook' ($st -match '<h1[^>]*>Thống kê</h1>' -and $st -match '>23<' -and $st -match [regex]::Escape($fp) -and $st -match 'Facebook') ([regex]::Match($st, 'stat__value">[^<]*').Value)
+$code = curl.exe -s -o NUL -w '%{http_code}' -b "$S\jar-stats.txt" "$B/admin/stats?days=abc"
+$code7 = curl.exe -s -o NUL -w '%{http_code}' -b "$S\jar-stats.txt" "$B/admin/stats?days=7"
+Check 'Tham số days sai -> 200 (về mặc định 30), days=7 -> 200' ($code -eq '200' -and $code7 -eq '200') "$code / $code7"
+$dash = Get-Page '/admin' "$S\jar-stats.txt"
+Check 'Tổng quan có ô "Lượt xem hôm nay" -> Thống kê' ($dash -match 'traffic-strip' -and $dash -match 'Lượt xem hôm nay')
+$login = (curl.exe -s "$B/admin/login") -join "`n"
+Check 'Trang đăng nhập admin không gắn beacon (trackable=false)' ($login -match 'name="password"' -and $login -notmatch 'tt-stats')
+Beacon "{`"p`":`"$BP/phim`"}" 'Mozilla/5.0 (Linux; Android 13; CUBOT KINGKONG 9) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36' | Out-Null
+Check 'Điện thoại Cubot không bị coi là bot' ((Views '/phim') -eq '1/1') (Views '/phim')
+# 2 beacon SONG SONG của một người mới -> người xem chỉ +1 (rowCount nguyên tử)
+[IO.File]::WriteAllText("$S\beacon.json", "{`"p`":`"$BP/gioi-thieu`"}", (New-Object System.Text.UTF8Encoding($false)))
+curl.exe -s -Z -A 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) Safari/605.1.15' -H 'Content-Type: text/plain' --data-binary "@$S\beacon.json" -o NUL -o NUL "$B/t" "$B/t" | Out-Null
+Check '2 beacon song song của 1 người -> 2 lượt xem, 1 người xem' ((Views '/gioi-thieu') -eq '2/1') (Views '/gioi-thieu')
+# Giới hạn theo IP: đổi UA không lách được khi IP đã đủ MAX_IP_HITS trong ngày
+Sql "UPDATE page_visitors_daily SET hits = 1000 WHERE day = CURDATE() AND path = '#ip'" | Out-Null
+Beacon "{`"p`":`"$BP/lien-he`"}" ('Mozilla/5.0 UA-moi-' + [guid]::NewGuid().ToString('N')) | Out-Null
+Check 'IP đã đủ 1000 lượt/ngày -> đổi User-Agent cũng không ghi thêm' ((Views '/lien-he') -eq '0/0') (Views '/lien-he')
+Sql "UPDATE page_visitors_daily SET hits = 1 WHERE day = CURDATE() AND path = '#ip'" | Out-Null
+# Chống spam referrer: hôm nay đã có 50 nguồn -> tên miền lạ mới gom vào "other", nguồn đã biết vẫn giữ
+$fake = (1..50 | ForEach-Object { "(CURDATE(), 'spam$_.example', 1)" }) -join ','
+Sql "DELETE FROM referrers_daily WHERE day = CURDATE() AND source NOT IN ('facebook','direct'); INSERT INTO referrers_daily (day, source, views) VALUES $fake;" | Out-Null
+Beacon "{`"p`":`"$BP/lien-he`",`"r`":`"https://nguon-moi.example/a`"}" 'Mozilla/5.0 UA-ref-1' | Out-Null
+Beacon "{`"p`":`"$BP/lien-he`",`"r`":`"https://www.google.com/`"}" 'Mozilla/5.0 UA-ref-2' | Out-Null
+Check 'Đủ 50 nguồn/ngày: tên miền lạ -> other, Google vẫn là google' ((Sql "SELECT COUNT(*) FROM referrers_daily WHERE day = CURDATE() AND source = 'nguon-moi.example'") -eq '0' -and (Sql "SELECT views FROM referrers_daily WHERE day = CURDATE() AND source = 'other'") -eq '1' -and (Sql "SELECT views FROM referrers_daily WHERE day = CURDATE() AND source = 'google'") -eq '1')
+
 Write-Output '== Giới hạn đăng nhập sai =='
 Sql 'DELETE FROM login_attempts;' | Out-Null
 $last = ''

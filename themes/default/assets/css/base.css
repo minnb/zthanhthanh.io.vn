@@ -4,7 +4,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 /* Thuộc tính hidden luôn thắng các rule display (img/btn...) */
 [hidden] { display: none !important; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: 24px; }
+@media (min-width: 960px) { html { scroll-padding-top: calc(var(--header-h) + 24px); } }
 body {
   margin: 0;
   background: var(--paper);
@@ -14,14 +15,16 @@ body {
   line-height: var(--lh-body);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-wrap: break-word;
 }
 img, svg, video { display: block; max-width: 100%; height: auto; }
 h1, h2, h3, h4 {
-  margin: 0; font-family: var(--font-heading); font-weight: 600;
-  line-height: var(--lh-heading); letter-spacing: -0.01em;
+  margin: 0; font-family: var(--font-heading); font-weight: 500;
+  line-height: var(--lh-heading); letter-spacing: -0.015em; text-wrap: balance;
 }
-p, ul, ol, dl, figure, blockquote { margin: 0; }
+p, ul, ol, dl, dd, figure, blockquote { margin: 0; }
 :where(ul[class], ol[class]) { list-style: none; padding: 0; }
 a { color: inherit; text-decoration: none; }
 a:hover { color: var(--accent); }
@@ -29,8 +32,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 strong, b { font-weight: 600; }
 em, i { font-style: italic; }
+::selection { background: var(--accent-bg); color: var(--on-accent-bg); }
 
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+/* Không đổi border-radius khi focus: nút pill, chip, thẻ giữ nguyên hình, chỉ thêm viền nhấn */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+[tabindex="-1"]:focus { outline: none; }
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -38,53 +44,61 @@ em, i { font-style: italic; }
 }
 .skip-link {
   position: absolute; left: 16px; top: -100px; z-index: 100;
-  background: var(--accent); color: var(--on-accent);
-  padding: 10px 16px; border-radius: var(--radius-sm); font-weight: 600;
+  background: var(--accent-bg); color: var(--on-accent-bg);
+  padding: 12px 18px; border-radius: 999px; font-weight: 600;
 }
-.skip-link:focus { top: 12px; color: var(--on-accent); }
+.skip-link:focus { top: 12px; color: var(--on-accent-bg); }
 
-/* Tiêu đề lớn */
-.h-display {
-  font-family: var(--font-heading); font-size: clamp(2.2rem, 6.5vw, 3.5rem);
-  line-height: 1.28; letter-spacing: -0.01em; font-weight: 600;
-}
-.h-1 {
-  font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 2.85rem);
-  line-height: 1.25; font-weight: 600;
-}
-.h-2 {
-  font-family: var(--font-heading); font-size: clamp(1.5rem, 3.8vw, 2.2rem);
-  line-height: 1.3; font-weight: 600;
-}
-.h-3 {
-  font-family: var(--font-heading); font-size: 1.25rem;
-  line-height: 1.35; font-weight: 600;
-}
-.h-display em, .h-1 em, .h-2 em, .h-3 em {
-  font-family: var(--font-heading); font-style: italic; font-weight: 400;
-}
+/* Tiêu đề */
+.h-display { font-family: var(--font-heading); font-size: clamp(2.25rem, 1.35rem + 3.7vw, 4.25rem); line-height: 1.2; font-weight: 400; }
+.h-1 { font-family: var(--font-heading); font-size: clamp(2rem, 1.45rem + 2.4vw, 3.25rem); line-height: 1.22; font-weight: 400; }
+.h-2 { font-family: var(--font-heading); font-size: clamp(1.625rem, 1.3rem + 1.35vw, 2.375rem); line-height: 1.25; font-weight: 500; }
+.h-3 { font-family: var(--font-heading); font-size: 1.25rem; line-height: 1.3; font-weight: 500; }
+.h-display em, .h-1 em, .h-2 em { font-style: italic; color: var(--accent); }
 .muted { color: var(--muted); }
 .text-accent { color: var(--accent); }
-.lead { font-size: 1.125rem; line-height: 1.75; color: var(--muted); }
+.lead { font-size: clamp(1.0625rem, 1rem + .3vw, 1.1875rem); line-height: 1.7; color: var(--muted); }
 .small { font-size: var(--fs-small); }
 .xs { font-size: var(--fs-xs); }
 
-/* Nội dung bài viết (Markdown đã render) */
-.prose { max-width: var(--prose); margin-inline: auto; line-height: 1.75; font-weight: 400; }
-.prose > * + * { margin-top: 1.15em; }
-.prose h2 { font-size: 1.4rem; line-height: 1.35; margin-top: 1.8em; }
-.prose h3 { font-size: 1.2rem; margin-top: 1.5em; }
-.prose a:not([class]) { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-.prose ul, .prose ol { padding-left: 1.4em; }
-.prose li + li { margin-top: .4em; }
-.prose blockquote {
-  border-left: 3px solid var(--accent);
-  padding: .25em 0 .25em 1.1em;
-  font-style: italic; font-size: 1.2rem; line-height: 1.6;
+/* Nhãn nhỏ chữ hoa, gạch vàng đồng phía trước */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: var(--fs-xs); font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
 }
-.prose img { border-radius: var(--radius-sm); }
-.prose figcaption { margin-top: .5em; font-size: var(--fs-small); color: var(--muted); text-align: center; }
-.prose hr { border: 0; border-top: 1px solid var(--line); margin: 2em 0; }
+.eyebrow::before { content: ""; flex: none; width: 24px; height: 1px; background: var(--brass); }
+.eyebrow a:hover { color: var(--accent); }
+/* Nhãn nhỏ chữ hoa (chuyên mục, số thứ tự, "Bài trước"...) – màu do class đi kèm quyết định */
+.label { font-size: var(--fs-xs); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.eyebrow--accent { color: var(--accent); }
+.eyebrow--gold { color: var(--gold-text); }
+
+/* ---------- Nội dung bài viết (Markdown đã render) ---------- */
+.prose { max-width: var(--prose); margin-inline: auto; font-size: var(--fs-prose); line-height: 1.8; }
+.prose > * + * { margin-top: 1.25em; }
+.prose h2 { margin-top: 2.2em; font-size: clamp(1.5rem, 1.3rem + .8vw, 1.875rem); }
+.prose h3 { margin-top: 1.8em; font-size: 1.25rem; }
+.prose h2 + *, .prose h3 + * { margin-top: .8em; }
+.prose a:not([class]) { color: var(--accent); text-decoration: underline; text-decoration-color: var(--brass); text-decoration-thickness: 1px; text-underline-offset: .2em; }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose li + li { margin-top: .5em; }
+.prose li::marker { color: var(--accent); }
+.prose blockquote { position: relative; margin-block: 2.2em; padding: .3em 0 0 3.2rem; }
+.prose blockquote::before {
+  content: "\201C"; position: absolute; left: 0; top: -.12em;
+  font-family: var(--font-heading); font-size: 4.5rem; line-height: 1; color: var(--brass);
+}
+.prose blockquote, .prose blockquote p { font-family: var(--font-heading); font-style: italic; font-size: clamp(1.25rem, 1.1rem + .6vw, 1.5rem); line-height: 1.5; }
+.prose blockquote em { font-style: italic; }
+.prose img { width: 100%; border-radius: var(--radius); }
+/* Ảnh + chú thích kiểu "![alt](src)\n*chú thích*" -> <p><img><br><em>…</em></p> */
+.prose p:has(> img) { margin-block: 2.2em; }
+.prose > :first-child { margin-top: 0; }
+.prose img + br { display: none; }
+.prose img + br + em, .prose figcaption { display: block; margin-top: 12px; font-size: var(--fs-sm); line-height: 1.6; color: var(--muted); }
+.prose hr { height: 1px; margin-block: 2.6em; border: 0; background: linear-gradient(90deg, transparent, var(--brass), transparent); opacity: .6; }
+.prose table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+.prose th, .prose td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }

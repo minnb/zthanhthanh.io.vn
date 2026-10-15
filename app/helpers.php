@@ -48,6 +48,21 @@ function asset(string $file): string
 }
 
 /**
+ * Nội dung một file CSS đã build trong public/assets (sinh từ theme bởi tools/build_assets.php), để nhúng
+ * vào <style> thay cho thêm một <link> chặn render. Chỉ nhận tên "abc-xyz.css"; không có file -> ''.
+ */
+function asset_inline_css(string $file): string
+{
+    if (!preg_match('/^[a-z0-9-]+\.css$/', $file)) {
+        return '';
+    }
+    $path = APP_ROOT . '/public/assets/' . $file;
+    $css = is_file($path) ? (string) file_get_contents($path) : '';
+    // CSS do theme tự sinh; vẫn chặn chuỗi đóng thẻ để nội dung không thể thoát khỏi <style>
+    return str_ireplace('</style', '<\/style', $css);
+}
+
+/**
  * Render một partial/block của theme ngay trong template.
  *
  * @param array<string, mixed> $data
@@ -55,6 +70,18 @@ function asset(string $file): string
 function partial(string $template, array $data = []): string
 {
     return \App\Core\View::partial($template, $data);
+}
+
+/**
+ * Icon SVG lấy từ sprite partials/icons.php (in một lần trong layout). Tên không hợp lệ -> chuỗi rỗng.
+ * Icon chỉ để trang trí (aria-hidden): nút/link chứa icon phải tự có nhãn chữ hoặc aria-label.
+ */
+function icon(string $name, string $class = 'i--sm'): string
+{
+    if (!preg_match('/^[a-z0-9-]+$/', $name)) {
+        return '';
+    }
+    return '<svg class="i ' . e($class) . '" aria-hidden="true" focusable="false"><use href="#i-' . $name . '"/></svg>';
 }
 
 /** Đường dẫn hiện tại có khớp (hoặc nằm dưới) $path không – dùng để đánh dấu menu đang mở. */

@@ -8,8 +8,8 @@
 $u = rawurlencode($shareUrl);
 ?>
 <div class="share">
-  <span class="share__label">Chia sẻ:</span>
-  <a class="share__btn" href="https://www.facebook.com/sharer/sharer.php?u=<?= e($u) ?>" target="_blank" rel="noopener">Facebook</a>
-  <a class="share__btn" href="https://www.threads.net/intent/post?text=<?= e(rawurlencode($shareTitle . ' ' . $shareUrl)) ?>" target="_blank" rel="noopener">Threads</a>
-  <button class="share__btn" type="button" data-copy-link="<?= e($shareUrl) ?>">Sao chép link</button>
+  <span>Chia sẻ</span>
+  <a class="icon-btn" href="https://www.facebook.com/sharer/sharer.php?u=<?= e($u) ?>" target="_blank" rel="noopener" aria-label="Chia sẻ lên Facebook (mở tab mới)"><?= icon('fb', '') ?></a>
+  <a class="icon-btn" href="https://www.threads.net/intent/post?text=<?= e(rawurlencode($shareTitle . ' ' . $shareUrl)) ?>" target="_blank" rel="noopener" aria-label="Chia sẻ lên Threads (mở tab mới)"><?= icon('threads', '') ?></a>
+  <button class="icon-btn" type="button" data-copy-link="<?= e($shareUrl) ?>" aria-label="Sao chép liên kết bài viết"><?= icon('link', '') ?></button>
 </div>

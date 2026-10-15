@@ -14,9 +14,15 @@
     "fonts/lora-normal-latin-ext.woff2": "2a2d9c22c9",
     "fonts/lora-normal-latin.woff2": "ddb8c66035",
     "fonts/lora-normal-vietnamese.woff2": "98c22de85f",
-    "app.css": "608170fb80",
-    "admin.css": "6d77800a78",
-    "app.js": "c5eb0424ac",
+    "app.css": "d45ae3c652",
+    "home.css": "50b86fe361",
+    "film.css": "8bd9100afb",
+    "article.css": "e0334bf54f",
+    "studio.css": "a673d0b8d4",
+    "about.css": "45a4704ec4",
+    "contact.css": "65c786ed43",
+    "admin.css": "5fcda9ecbd",
+    "app.js": "b3ed094cbd",
     "admin.js": "46f7f86193",
     "img/og-default.png": "e515c2407a"
 }

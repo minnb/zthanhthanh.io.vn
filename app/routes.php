@@ -8,6 +8,7 @@ use App\Controllers\HomeController;
 use App\Controllers\PageController;
 use App\Controllers\PostController;
 use App\Controllers\SeoController;
+use App\Controllers\StatsController;
 use App\Core\Config;
 use App\Core\Router;
 
@@ -25,6 +26,7 @@ return static function (Router $router): void {
     $router->get('/phim', [FilmController::class, 'index']);
     $router->get('/phim/{slug}', [FilmController::class, 'show']);
 
+    $router->get('/bai-viet', [PostController::class, 'index']);   // trước /{category}
     $router->get('/chu-de/{tag}', [PostController::class, 'tag']);
 
     $router->get('/gioi-thieu', [PageController::class, 'about']);
@@ -33,6 +35,9 @@ return static function (Router $router): void {
     $router->get('/kich-ban', [PageController::class, 'studio']);
     $router->get('/tu-sach', [PageController::class, 'studio']);
     $router->get('/en/press-kit', [PageController::class, 'pressKit']);
+
+    // Beacon thống kê lượt xem từ app.js (luôn 204)
+    $router->post('/t', [StatsController::class, 'hit']);
 
     // ---------------- Admin (mọi action tự kiểm quyền + CSRF trong AdminController::guard) ----------------
     $router->get('/admin/login', [Admin\AuthController::class, 'form']);
@@ -70,6 +75,8 @@ return static function (Router $router): void {
     $router->get('/admin/settings', [Admin\SettingsController::class, 'edit']);
     $router->post('/admin/settings', [Admin\SettingsController::class, 'update']);
     $router->post('/admin/settings/cache', [Admin\SettingsController::class, 'flushCache']);
+
+    $router->get('/admin/stats', [Admin\StatsController::class, 'index']);
 
     $router->post('/admin/api/preview', [Admin\ApiController::class, 'preview']);
     $router->post('/admin/api/posts/{id}/autosave', [Admin\ApiController::class, 'autosave']);

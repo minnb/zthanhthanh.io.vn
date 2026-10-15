@@ -1,6 +1,6 @@
 <?php
 /**
- * Phim nổi bật & Dự án kịch bản đang phát triển.
+ * Dự án phim tiêu biểu: thẻ phim nổi bật (ĐỢI) + thẻ dự án đang phát triển (tông tối "noir").
  *
  * @var array<string, mixed>|null $featuredFilm
  * @var list<array<string, mixed>>|null $allFilms
@@ -9,77 +9,87 @@
 if (!$featuredFilm) {
     return;
 }
-$filmUrl = url('/phim/' . $featuredFilm['slug']);
 $devFilm = null;
-if (!empty($allFilms)) {
-    foreach ($allFilms as $f) {
-        if ($f['slug'] === 'dua-con-den-tu-coi-am' || ($f['status'] ?? '') === 'in_development') {
-            $devFilm = $f;
-            break;
-        }
+foreach ($allFilms ?? [] as $f) {
+    if ((int) $f['id'] !== (int) $featuredFilm['id'] && ($f['status'] ?? '') === 'in_development') {
+        $devFilm = $f;
+        break;
     }
 }
+$contactEmail = (string) ($site['contactEmail'] ?? '');
 ?>
-<section class="container section" id="featured-works" aria-labelledby="featured-heading">
-  <div class="section__head">
-    <div>
-      <p class="eyebrow">DANH SÁCH TÁC PHẨM · SCREENWRITING PORTFOLIO</p>
-      <h2 class="h-2 mt-2" id="featured-heading">Dự án Phim & Kịch bản</h2>
-    </div>
-    <a class="section__more" href="<?= e(url('/phim')) ?>">Tất cả phim →</a>
-  </div>
-
-  <div class="works-showcase">
-    <!-- Phim tiêu điểm: ĐỢI -->
-    <article class="film-feature">
-      <a class="film-feature__media" href="<?= e($filmUrl) ?>" tabindex="-1" aria-hidden="true">
-        <?php if (!empty($featuredFilm['poster'])): ?>
-          <?= partial('partials/image', ['media' => $featuredFilm['poster'], 'ratio' => \App\Core\Image::FRAME_POSTER, 'sizes' => '(min-width: 1152px) 1104px, 100vw']) ?>
-        <?php else: ?>
-          <?= partial('partials/art-poster', ['filmTitle' => (string) $featuredFilm['title'], 'caption' => (string) ($featuredFilm['caption'] ?? '')]) ?>
-        <?php endif; ?>
-        <?php if (!empty($featuredFilm['badge'])): ?><span class="badge"><?= e($featuredFilm['badge']) ?></span><?php endif; ?>
-      </a>
-      <div class="film-feature__body">
-        <div>
-          <span class="scene-no">Tác phẩm tiêu biểu · Phim ngắn</span>
-          <h3 class="film-feature__title"><a href="<?= e($filmUrl) ?>"><?= e($featuredFilm['title']) ?></a></h3>
-          <?php if (!empty($featuredFilm['logline'])): ?><p class="lead film-feature__logline"><?= e($featuredFilm['logline']) ?></p><?php endif; ?>
-        </div>
-        <dl class="meta-list">
-          <div><dt>Biên kịch & vai chính</dt><dd><?= e($site['authorName'] ?? 'Thanh Thanh') ?></dd></div>
-          <?php if (!empty($featuredFilm['genre'])): ?><div><dt>Thể loại</dt><dd><?= e($featuredFilm['genre']) ?></dd></div><?php endif; ?>
-          <?php if (!empty($featuredFilm['duration_min'])): ?>
-            <div><dt>Thời lượng</dt><dd><?= (int) $featuredFilm['duration_min'] ?> phút<?php if (!empty($featuredFilm['duration_note'])): ?> <span class="muted">(<?= e($featuredFilm['duration_note']) ?>)</span><?php endif; ?></dd></div>
-          <?php endif; ?>
-        </dl>
-        <div class="film-feature__actions">
-          <a class="btn btn--primary btn--sm" href="<?= e($filmUrl) ?>">Xem chi tiết phim & Hậu trường →</a>
-          <a class="btn btn--outline btn--sm" href="<?= e(url('/goc-sang-tac')) ?>">Đọc trích đoạn kịch bản →</a>
-        </div>
+<section class="section section--tint" id="featured-works" aria-labelledby="films-title">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__text">
+        <p class="eyebrow">Dự án phim</p>
+        <h2 class="h-2" id="films-title">Phim &amp; dự án tiêu biểu</h2>
       </div>
-    </article>
+      <a class="text-link" href="<?= e(url('/phim')) ?>">Tất cả phim <?= icon('arrow-r') ?></a>
+    </div>
 
-    <?php if ($devFilm): ?>
-      <!-- Dự án đang phát triển / Pitching: Đứa con đến từ cõi âm -->
-      <article class="project-pitch-card">
-        <div class="project-pitch-card__badge-row">
-          <span class="badge badge--gold"><?= e($devFilm['badge'] ?? 'Top 7 From Script to Screen') ?></span>
-          <span class="project-pitch-card__status">⚡ Dự án điện ảnh đang phát triển · Mời gọi hợp tác</span>
-        </div>
-        <div class="project-pitch-card__content">
-          <div class="project-pitch-card__main">
-            <h3 class="project-pitch-card__title">
-              <a href="<?= e(url('/phim/' . $devFilm['slug'])) ?>"><?= e($devFilm['title']) ?></a>
-            </h3>
-            <p class="project-pitch-card__logline"><?= e($devFilm['logline']) ?></p>
-          </div>
-          <div class="project-pitch-card__cta">
-            <a class="btn btn--outline btn--sm" href="<?= e(url('/phim/' . $devFilm['slug'])) ?>">Xem hồ sơ phim & Pitch deck →</a>
-            <a class="btn btn--primary btn--sm" href="mailto:<?= e($site['contactEmail'] ?? 'doicho147@gmail.com') ?>?subject=<?= rawurlencode('[Pitching] Hợp tác dự án ' . $devFilm['title']) ?>">Liên hệ Pitching dự án</a>
+    <div class="films">
+      <article class="film-card card" aria-labelledby="film-<?= e((string) $featuredFilm['slug']) ?>">
+        <span class="media">
+          <?php if (!empty($featuredFilm['poster'])): ?>
+            <?= partial('partials/image', ['media' => $featuredFilm['poster'], 'ratio' => 16 / 10, 'sizes' => '(min-width: 1240px) 680px, (min-width: 960px) 55vw, 100vw']) ?>
+          <?php else: ?>
+            <?= partial('partials/art-poster', ['filmTitle' => (string) $featuredFilm['title'], 'caption' => (string) ($featuredFilm['caption'] ?? '')]) ?>
+          <?php endif; ?>
+        </span>
+        <div class="film-card__body">
+          <?php if (!empty($featuredFilm['badge'])): ?><p><span class="badge badge--gold label"><?= icon('star') ?><?= e($featuredFilm['badge']) ?></span></p><?php endif; ?>
+          <h3 class="film-card__title" id="film-<?= e((string) $featuredFilm['slug']) ?>">
+            <a href="<?= e(url((string) $featuredFilm['url'])) ?>"><?= e($featuredFilm['title']) ?></a>
+            <small><?= e(trim(($featuredFilm['title_en'] ?? '') . (!empty($featuredFilm['year']) ? ' · ' . $featuredFilm['year'] : ''), ' ·')) ?></small>
+          </h3>
+          <ul class="meta-row">
+            <?php if (!empty($featuredFilm['genre'])): ?><li><?= icon('film') ?><?= e($featuredFilm['genre']) ?></li><?php endif; ?>
+            <?php if (!empty($featuredFilm['duration_note']) || !empty($featuredFilm['duration_min'])): ?>
+              <li><?= icon('clock') ?><?= e((string) ($featuredFilm['duration_note'] ?: $featuredFilm['duration_min'] . ' phút')) ?></li>
+            <?php endif; ?>
+            <li><?= icon('users') ?>Biên kịch &amp; vai chính: <?= e((string) ($site['authorName'] ?? '')) ?></li>
+          </ul>
+          <?php if (!empty($featuredFilm['logline'])): ?><p class="logline"><?= e($featuredFilm['logline']) ?></p><?php endif; ?>
+          <?php if (!empty($featuredFilm['awards_list'])): ?>
+            <ul class="awards" aria-label="Thành tích">
+              <?php foreach ($featuredFilm['awards_list'] as $award): ?><li><?= icon('star') ?><span><?= e((string) $award) ?></span></li><?php endforeach; ?>
+            </ul>
+          <?php endif; ?>
+          <div class="film-card__foot">
+            <a class="text-link" href="<?= e(url((string) $featuredFilm['url'])) ?>">Trang phim &amp; hậu trường <?= icon('arrow-r') ?></a>
+            <a class="text-link" href="<?= e(url('/goc-sang-tac')) ?>">Đọc trích đoạn kịch bản <?= icon('arrow-r') ?></a>
           </div>
         </div>
       </article>
-    <?php endif; ?>
+
+      <?php if ($devFilm): ?>
+        <article class="film-card dark-surface" aria-labelledby="film-<?= e((string) $devFilm['slug']) ?>">
+          <div class="noir-art" aria-hidden="true">
+            <div class="noir-art__moon"></div>
+            <?php if (!empty($devFilm['title_en'])): ?><p class="noir-art__word" lang="en"><?= e($devFilm['title_en']) ?></p><?php endif; ?>
+          </div>
+          <div class="film-card__body">
+            <p><span class="badge label"><?= e($devFilm['status_label']) ?></span></p>
+            <h3 class="film-card__title" id="film-<?= e((string) $devFilm['slug']) ?>">
+              <a href="<?= e(url((string) $devFilm['url'])) ?>"><?= e($devFilm['title']) ?></a>
+            </h3>
+            <?php if (!empty($devFilm['genre'])): ?><ul class="meta-row"><li><?= icon('film') ?><?= e($devFilm['genre']) ?></li></ul><?php endif; ?>
+            <?php if (!empty($devFilm['logline'])): ?><p class="logline"><?= e($devFilm['logline']) ?></p><?php endif; ?>
+            <?php if (!empty($devFilm['awards_list'])): ?>
+              <ul class="awards" aria-label="Thành tích dự án">
+                <?php foreach ($devFilm['awards_list'] as $award): ?><li><?= icon('star') ?><span><?= e((string) $award) ?></span></li><?php endforeach; ?>
+              </ul>
+            <?php endif; ?>
+            <div class="film-card__foot">
+              <a class="text-link" href="<?= e(url((string) $devFilm['url'])) ?>">Hồ sơ dự án <?= icon('arrow-r') ?></a>
+              <?php if ($contactEmail !== ''): ?>
+                <a class="text-link" href="mailto:<?= e($contactEmail) ?>?subject=<?= rawurlencode('[Pitching] Hợp tác dự án ' . $devFilm['title']) ?>">Liên hệ pitching <?= icon('mail') ?></a>
+              <?php endif; ?>
+            </div>
+          </div>
+        </article>
+      <?php endif; ?>
+    </div>
   </div>
 </section>

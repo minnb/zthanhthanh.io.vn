@@ -20,6 +20,7 @@ final class FilmController
             'title' => 'Phim',
             'description' => 'Các phim và dự án phim của biên kịch Thanh Thanh: phim ngắn ĐỢI và những dự án đang phát triển.',
             'films' => Film::all(),
+            'styles' => ['film'],
             'breadcrumb' => [['label' => 'Trang chủ', 'url' => '/'], ['label' => 'Phim']],
         ]);
     }
@@ -43,6 +44,7 @@ final class FilmController
             'imageAlt' => $film['poster'] ? (string) $film['poster']['alt'] : '',
             'jsonLd' => [Seo::movieSchema($film, Site::info())],
             'film' => $film,
+            'styles' => ['film'],
             'milestones' => Film::milestones((int) $film['id']),
             'related' => !empty($film['related_tag']) ? Post::byTagSlug((string) $film['related_tag'], 3) : [],
             'breadcrumb' => [

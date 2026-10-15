@@ -81,6 +81,11 @@ final class Film
         }
         $film['poster'] = $poster;
         $film['caption'] = trim($kind . (!empty($film['year']) ? ' · ' . $film['year'] : ''), ' ·');
+        // Danh sách giải thưởng dạng mảng chữ thuần (mỗi dòng "- ..." của awards_md) cho thẻ phim / dải vinh danh
+        $film['awards_list'] = array_values(array_filter(array_map(
+            static fn (string $line): string => trim(preg_replace('/^\s*[-*+]\s+/u', '', $line) ?? ''),
+            preg_split('/\R/u', (string) ($film['awards_md'] ?? '')) ?: []
+        ), static fn (string $s): bool => $s !== ''));
         $film['status_label'] = match ($film['status']) {
             'in_development' => 'Đang phát triển',
             'in_production' => 'Đang sản xuất',

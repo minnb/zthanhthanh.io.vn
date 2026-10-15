@@ -1,0 +1,17 @@
+/* ==========================================================
+   Trang phim (bundle film.css = pages/film-card.css + pages/film.css): /phim, /phim/{slug}
+   ========================================================== */
+.film-hero { padding-block: 24px clamp(40px, 5vw, 64px); }
+.film-hero .breadcrumb ol { color: var(--on-screen-muted); }
+.film-hero .breadcrumb [aria-current="page"] { color: var(--on-screen); }
+.film-hero__media { margin-top: 24px; aspect-ratio: 2.39 / 1; border-radius: var(--radius); box-shadow: 0 24px 48px rgba(0, 0, 0, .35); }
+.film-hero__media iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.film-hero__grid { display: grid; gap: 32px; margin-top: 32px; }
+.film-hero__title { margin-top: 8px; font-size: clamp(3rem, 2rem + 5vw, 4.5rem); line-height: 1.1; font-weight: 400; }
+.film-hero__logline { margin-top: 16px; color: var(--on-screen-soft); }
+.film-hero .badge { margin-top: 20px; }
+.meta-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-self: start; padding: 22px; border-radius: var(--radius); background: rgba(255, 255, 255, .04); font-size: var(--fs-small); }
+.meta-list dt { color: var(--on-screen-muted); }
+.meta-list dd { font-weight: 600; }
+.meta-list .wide { grid-column: 1 / -1; }
+@media (min-width: 768px) { .film-hero__grid { grid-template-columns: 1.5fr 1fr; } }

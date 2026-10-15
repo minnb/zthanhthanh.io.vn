@@ -97,7 +97,9 @@ final class DevController
         $firstPost = (int) (\App\Core\Db::value('SELECT id FROM posts WHERE deleted_at IS NULL ORDER BY id LIMIT 1') ?? 0);
         $data = match ($screen) {
             'dashboard' => ['template' => 'dashboard', 'title' => 'Tổng quan', 'counts' => \App\Models\AdminPost::counts(),
-                'recent' => \App\Models\AdminPost::recent(5), 'warnings' => \App\Models\AdminPost::seoWarnings(8)],
+                'recent' => \App\Models\AdminPost::recent(5), 'warnings' => \App\Models\AdminPost::seoWarnings(8),
+                'traffic' => \App\Controllers\Admin\DashboardController::traffic()],
+            'stats' => ['template' => 'stats', 'title' => 'Thống kê'] + \App\Controllers\Admin\StatsController::report(30),
             'posts' => ['template' => 'posts/index', 'title' => 'Bài viết',
                 'filters' => ['q' => '', 'status' => '', 'category' => 0, 'source' => '', 'trash' => false],
                 'result' => \App\Models\AdminPost::paginate([], 1), 'page' => 1,
@@ -133,6 +135,8 @@ final class DevController
 
         return View::render('pages/dev-ui', [
             'title' => 'Thư viện giao diện',
+            'trackable' => false,
+            'styles' => ['article'], // thư viện giao diện có thẻ, chia sẻ, hộp tác giả của trang bài viết
             'milestones' => $film !== null ? Film::milestones((int) $film['id']) : [],
             'samplePosts' => [
                 ['title' => 'Không để người khác quyết định giới hạn của bản thân', 'url' => '/hau-truong-bien-kich/vi-du-1',

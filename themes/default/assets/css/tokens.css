@@ -1,31 +1,57 @@
 /* ==========================================================
-   Design tokens – "Giấy ấm + đỏ đô". Mọi màu/kích thước dùng biến ở đây.
+   Design tokens – Theme 2026 "Editorial Modernist & Cinema Minimalist"
+   (mockup đã duyệt: docs/theme/preview.html). Mọi màu/kích thước dùng biến ở đây.
+   Tên token cũ (--paper, --card, --accent...) được GIỮ vì admin.css dùng chung.
    ========================================================== */
 :root {
-  --paper: #F7F1E8;
-  --card: #FFFBF5;
-  --ink: #302621;
-  --muted: #6E5E53;
-  --line: #E4D9C8;
-  --accent: #8E1F2F;
-  --on-accent: #FFFFFF;
-  --brass: #B08D57;
-  --screen: #1E1512;         /* nền "phòng chiếu" (poster, trang phim) */
-  --on-screen: #EDE4D8;
-  --on-screen-muted: #B5A797;
-  --screen-line: #3A312B;
-  --screen-accent: #D0566A;
-  --on-screen-accent: #1C1714;
-  --on-screen-soft: #D9CDBE;
+  /* Bề mặt */
+  --paper: #FAFAF8;          /* nền trắng ngà */
+  --card: #FFFFFF;           /* bề mặt thẻ */
+  --surface-2: #F4F2EE;      /* dải nền chênh nhẹ thay cho đường viền */
+  --surface-3: #ECE8E1;
+  --line: #EFECE6;           /* hairline, dùng hạn chế */
+  /* Chữ */
+  --ink: #1C1917;            /* obsidian */
+  --muted: #6B635B;          /* xám nâu ấm */
+  /* Nhấn */
+  --accent: #8B1E2F;         /* đỏ rượu vang: chữ, link */
+  --on-accent: #FFFFFF;      /* chữ trên nền --accent (admin dùng) */
+  --accent-bg: #8B1E2F;      /* nền nút CTA */
+  --accent-bg-hover: #701624;
+  --on-accent-bg: #FFFFFF;
+  --accent-soft: rgba(139, 30, 47, 0.07);
+  --brass: #B89355;          /* vàng đồng champagne: đường kẻ, icon, chữ lớn */
+  --gold-text: #85652F;      /* vàng đồng đậm cho chữ nhỏ (đạt AA) */
+  --gold-soft: rgba(184, 147, 85, 0.14);
+  /* "Phòng chiếu" (giữ tối ở cả hai chế độ) */
+  --screen: #1C1917;
+  --screen-2: #2A2420;
+  --on-screen: #F5F2EB;
+  --on-screen-muted: #BDB3A5;
+  --on-screen-soft: #DDD5C8;
+  --on-screen-gold: #D9B97E;
+  --screen-line: #36302B;
+  --screen-accent: #E0828F;
+  --on-screen-accent: #1C1917;
+  --screen-glow: rgba(139, 30, 47, 0.38);
+  --screen-glow-gold: rgba(217, 185, 126, 0.15);
+  /* Giấy kịch bản */
+  --script-paper: #FFFFFF;
+  --script-ink: #1C1917;
+  /* Bìa sách bằng chữ (tủ sách) */
+  --book-1: #6E1F2B; --book-2: #24324A; --book-3: #4F5D4A; --book-4: #8A6A35; --book-5: #4A2F45;
+  --book-6: #3B3F44; --book-7: #7A3B26; --book-8: #2F4F52; --book-9: #5B4A3A; --book-10: #3A2E4F;
+  --on-book: #F5F2EB;
+  --header-bg: rgba(250, 250, 248, 0.86);
 
   /* Hình minh họa SVG (poster, chân dung): cố định, không đổi theo chế độ tối */
-  --art-bg: #1E1512;
-  --art-frame: #B08D57;
-  --art-red: #8E1F2F;
-  --art-light: #EDE4D8;
-  --art-gold: #C9A66B;
-  --art-ink: #302621;
-  --art-paper: #F7F1E8;
+  --art-bg: #1C1917;
+  --art-frame: #B89355;
+  --art-red: #8B1E2F;
+  --art-light: #F5F2EB;
+  --art-gold: #D9B97E;
+  --art-ink: #1C1917;
+  --art-paper: #FAFAF8;
 
   /* Trạng thái (trang dev, admin) */
   --success: #2E7D32;
@@ -41,57 +67,75 @@
   --fb-host: #65676B;
 
   --font-heading: "Lora", "Playfair Display", Georgia, "Times New Roman", serif;
-  --font-body: "Be Vietnam Pro", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-body: "Be Vietnam Pro", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font: var(--font-body);
-  --fs-body: 1.0625rem;      /* 17px */
+  --font-mono: "Courier New", Courier, monospace;
+  --fs-body: 1rem;           /* 16px */
+  --fs-prose: 1.0625rem;     /* 17px – vùng đọc bài */
   --fs-small: 0.9375rem;     /* 15px */
-  --fs-xs: 0.8125rem;        /* 13px */
+  --fs-sm: 0.8125rem;        /* 13px */
+  --fs-xs: 0.75rem;          /* 12px */
   --lh-body: 1.75;
-  --lh-heading: 1.28;
+  --lh-heading: 1.25;
 
-  --container: 72rem;
-  --prose: 40rem;
+  --container: 75rem;        /* 1200px */
+  --prose: 42.5rem;          /* 680px ≈ 65 ký tự */
   --gutter: 16px;
+  --space-section: 64px;
   --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius: 18px;
-  --radius-lg: 24px;
+  --radius-sm: 12px;
+  --radius: 20px;
+  --radius-lg: 28px;
   --tap: 44px;
-  --header-h: 72px;
+  --header-h: 68px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
 
-  /* Surface Elevation & Soft Shadows (Vibe Coding) */
-  --shadow-xs: 0 1px 2px rgba(43, 33, 28, 0.04);
-  --shadow-sm: 0 1px 3px rgba(43, 33, 28, 0.06), 0 1px 2px rgba(43, 33, 28, 0.04);
-  --shadow-md: 0 4px 14px rgba(43, 33, 28, 0.07), 0 1px 3px rgba(43, 33, 28, 0.04);
-  --shadow-lg: 0 12px 28px rgba(43, 33, 28, 0.09), 0 3px 8px rgba(43, 33, 28, 0.04);
+  /* Đổ bóng mờ sương (thay cho viền 1px) */
+  --shadow-xs: 0 1px 2px rgba(28, 25, 23, 0.04);
+  --shadow-sm: 0 2px 16px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(28, 25, 23, 0.02);
+  --shadow-md: 0 14px 36px rgba(28, 25, 23, 0.08), 0 2px 6px rgba(28, 25, 23, 0.03);
+  --shadow-lg: 0 24px 60px rgba(28, 25, 23, 0.10), 0 4px 12px rgba(28, 25, 23, 0.04);
 
   color-scheme: light;
 }
 
 @media (min-width: 768px) {
-  :root { --fs-body: 1.125rem; --gutter: 24px; }
+  :root { --gutter: 24px; --space-section: 80px; --fs-prose: 1.125rem; }
+}
+@media (min-width: 1280px) {
+  :root { --gutter: 40px; --space-section: 96px; }
 }
 
-/* Chế độ tối: theo hệ điều hành, trừ khi người dùng chọn sáng */
+/* Cinema Night Mode: theo hệ điều hành, trừ khi người dùng chọn sáng */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #1C1714; --card: #26201C; --ink: #EDE4D8; --muted: #B5A797;
-    --line: #3A312B; --accent: #D0566A; --on-accent: #1C1714; --brass: #C9A66B;
-    --screen: #120D0B;
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
-    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
+    --paper: #12100E; --card: #1C1917; --surface-2: #171412; --surface-3: #24201D; --line: #2B2623;
+    --ink: #F5F2EB; --muted: #A89F91;
+    --accent: #E0828F; --on-accent: #1C1917; --accent-bg: #A8344A; --accent-bg-hover: #BD4259;
+    --accent-soft: rgba(224, 130, 143, 0.10);
+    --brass: #C9A66B; --gold-text: #D4B47C; --gold-soft: rgba(201, 166, 107, 0.12);
+    --screen: #1C1917; --screen-2: #26211D;
+    --script-paper: #1E1A17; --script-ink: #ECE6DB;
+    --header-bg: rgba(18, 16, 14, 0.84);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 2px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 14px 36px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.3);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #1C1714; --card: #26201C; --ink: #EDE4D8; --muted: #B5A797;
-  --line: #3A312B; --accent: #D0566A; --on-accent: #1C1714; --brass: #C9A66B;
-  --screen: #120D0B;
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
+  --paper: #12100E; --card: #1C1917; --surface-2: #171412; --surface-3: #24201D; --line: #2B2623;
+  --ink: #F5F2EB; --muted: #A89F91;
+  --accent: #E0828F; --on-accent: #1C1917; --accent-bg: #A8344A; --accent-bg-hover: #BD4259;
+  --accent-soft: rgba(224, 130, 143, 0.10);
+  --brass: #C9A66B; --gold-text: #D4B47C; --gold-soft: rgba(201, 166, 107, 0.12);
+  --screen: #1C1917; --screen-2: #26211D;
+  --script-paper: #1E1A17; --script-ink: #ECE6DB;
+  --header-bg: rgba(18, 16, 14, 0.84);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 16px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 14px 36px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.3);
   color-scheme: dark;
 }

@@ -16,6 +16,29 @@ use App\Models\Tag;
 
 final class PostController
 {
+    /** Tất cả bài viết, mới nhất trước: /bai-viet */
+    public function index(): string
+    {
+        $path = '/bai-viet';
+        $page = Pagination::currentPage($path);
+        $result = Post::paginate(null, null, $page);
+        Pagination::assertInRange($page, $result['pages']);
+
+        return View::render('pages/post-list', [
+            'title' => Seo::pagedTitle('Bài viết', $page),
+            'description' => 'Chuyện thật từ bàn viết ra trường quay, kiến thức nghề biên kịch và những buổi chia sẻ của biên kịch Thanh Thanh.',
+            'noindex' => $result['total'] === 0,
+            'canonicalPath' => Pagination::path($path, $page),
+            'heading' => 'Bài viết',
+            'intro' => 'Chuyện thật từ bàn viết ra trường quay: làm phim ĐỢI, pitching, ekip và những lần đầu tiên. Cùng kiến thức nghề và những buổi chia sẻ bước ra khỏi vỏ ốc.',
+            'eyebrow' => 'Blog · Hậu trường biên kịch',
+            'basePath' => $path,
+            'result' => $result,
+            'filter' => self::filter($path),
+            'breadcrumb' => [['label' => 'Trang chủ', 'url' => '/'], ['label' => 'Bài viết']],
+        ]);
+    }
+
     /** Danh sách bài của một danh mục: /hau-truong-bien-kich, /goc-nghe... */
     public function category(string $category): string
     {
@@ -26,6 +49,7 @@ final class PostController
         Pagination::assertInRange($page, $result['pages']);
 
         return View::render('pages/post-list', [
+            'filter' => self::filter($path),
             'title' => Seo::pagedTitle((string) ($cat['seo_title'] ?: $cat['name']), $page),
             'description' => (string) ($cat['seo_desc'] ?: $cat['description']),
             // Danh mục chưa có bài là trang mỏng -> không cho index (khớp sitemap)
@@ -36,7 +60,11 @@ final class PostController
             'eyebrow' => 'Chuyên mục',
             'basePath' => $path,
             'result' => $result,
-            'breadcrumb' => [['label' => 'Trang chủ', 'url' => '/'], ['label' => (string) $cat['name']]],
+            'breadcrumb' => [
+                ['label' => 'Trang chủ', 'url' => '/'],
+                ['label' => 'Bài viết', 'url' => '/bai-viet'],
+                ['label' => (string) $cat['name']],
+            ],
         ]);
     }
 
@@ -62,10 +90,14 @@ final class PostController
             'modifiedAt' => (string) ($post['updated_at'] ?: $post['published_at']),
             'jsonLd' => [Seo::blogPostingSchema($post, Site::info(), $description)],
             'post' => $post,
+            'styles' => ['article'],
             'related' => Post::related($post, 3),
+            'adjacent' => Post::adjacent($post),
             'books' => Book::forPost((int) $post['id']),
+            // Cùng cấp bậc với trang chuyên mục: Trang chủ › Bài viết › Chuyên mục › Bài
             'breadcrumb' => [
                 ['label' => 'Trang chủ', 'url' => '/'],
+                ['label' => 'Bài viết', 'url' => '/bai-viet'],
                 ['label' => (string) $post['category_name'], 'url' => '/' . $post['category_slug']],
                 ['label' => (string) $post['title']],
             ],
@@ -92,7 +124,23 @@ final class PostController
             'eyebrow' => 'Chủ đề',
             'basePath' => $path,
             'result' => $result,
+            'filter' => self::filter(''),
             'breadcrumb' => [['label' => 'Trang chủ', 'url' => '/'], ['label' => '#' . $t['name']]],
         ]);
+    }
+
+    /**
+     * Dữ liệu thanh chuyên mục (partials/category-filter).
+     *
+     * @return array{categories: list<array{id: int, slug: string, name: string, total: int}>, allTotal: int, activePath: string}
+     */
+    private static function filter(string $activePath): array
+    {
+        $categories = Post::countByCategory();
+        return [
+            'categories' => $categories,
+            'allTotal' => array_sum(array_column($categories, 'total')),
+            'activePath' => $activePath,
+        ];
     }
 }

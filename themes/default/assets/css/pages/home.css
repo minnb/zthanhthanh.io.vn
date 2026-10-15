@@ -1,0 +1,45 @@
+/* ==========================================================
+   Trang chủ (bundle home.css = pages/home.css + pages/film-card.css):
+   hero, chỉ số thành tích, chân dung khung vòm, dải vinh danh, bố cục tạp chí.
+   ========================================================== */
+.hero { display: grid; gap: 56px; align-items: center; padding-block: clamp(40px, 6vw, 88px) clamp(56px, 7vw, 96px); }
+.hero__text > * + * { margin-top: 24px; }
+.hero__text .lead { max-width: 35rem; }
+.hero .btn-row { margin-top: 36px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 48px !important; }
+.stats__item { padding: 16px 18px; border-radius: var(--radius-sm); }
+.stats__value { font-family: var(--font-heading); font-size: 1.25rem; line-height: 1.3; color: var(--gold-text); }
+.stats__label { margin-top: 4px; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
+.portrait { position: relative; isolation: isolate; width: min(100%, 440px); margin-inline: auto; }
+.portrait .media, .portrait::before { border-radius: 240px 240px var(--radius-lg) var(--radius-lg); }
+.portrait .media { aspect-ratio: 4 / 5; box-shadow: var(--shadow-lg); }
+.portrait::before { content: ""; position: absolute; z-index: -1; inset: 18px -18px -18px 18px; border: 1px solid var(--brass); opacity: .55; }
+.portrait__note { position: relative; margin: -56px 16px 0; padding: 20px 22px; box-shadow: var(--shadow-lg); }
+.portrait__quote { font-family: var(--font-heading); font-style: italic; font-size: 1.0625rem; line-height: 1.55; }
+.portrait__by { margin-top: 10px; font-size: var(--fs-sm); color: var(--muted); }
+@media (min-width: 960px) {
+  .hero { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 72px; }
+  .portrait__note { position: absolute; left: -64px; bottom: 40px; max-width: 280px; margin: 0; }
+}
+
+/* Dải vinh danh */
+.honor { display: grid; gap: 36px; align-items: center; padding: clamp(32px, 5vw, 64px); border-radius: var(--radius-lg); }
+.honor__laurel { width: 108px; color: var(--on-screen-gold); }
+.honor__title { margin-top: 14px; font-size: clamp(2rem, 1.5rem + 2.2vw, 3.25rem); font-weight: 400; color: var(--on-screen-gold); }
+.honor .awards { margin-top: 20px; }
+.honor__poster { justify-self: center; width: min(220px, 70%); transform: rotate(2deg); }
+.honor__poster .media { aspect-ratio: 4 / 5; border-radius: 10px; box-shadow: 0 0 0 1px rgba(217, 185, 126, .35), 0 24px 48px rgba(0, 0, 0, .45); }
+@media (min-width: 900px) { .honor { grid-template-columns: auto minmax(0, 1fr) auto; gap: 48px; } .honor__poster { width: 200px; } }
+
+/* 3 bài mới nhất: 1 bài lớn + 2 bài ngang */
+.mag { display: grid; gap: 24px; }
+@media (min-width: 1024px) { .mag { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px; } .mag > :first-child { grid-row: span 2; } }
+.post-card--feature .media { aspect-ratio: 4 / 3; }
+.post-card--feature .post-card__body { gap: 12px; padding: 28px; }
+.post-card--feature .post-card__title { font-size: clamp(1.375rem, 1.15rem + .9vw, 1.875rem); line-height: 1.28; font-weight: 400; }
+.post-card--feature .post-card__excerpt { -webkit-line-clamp: 4; font-size: var(--fs-body); }
+@media (min-width: 640px) {
+  .post-card--row .card { flex-direction: row; }
+  .post-card--row .media { flex: none; width: 40%; min-height: 220px; aspect-ratio: auto; }
+  .post-card--row .post-card__excerpt { -webkit-line-clamp: 2; }
+}
